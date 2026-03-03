@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>card</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 font-sans p-4 md:p-8 flex justify-center items-start">
+    <div class="w-full max-w-6xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row mt-2 md:mt-8">
+        
+        <!-- Left: Variable Form -->
+        <div class="w-full md:w-5/12 bg-slate-50 p-6 md:p-8 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col max-h-screen md:max-h-[85vh]">
+            <h1 class="text-xl font-extrabold text-slate-800 mb-6 flex items-center shrink-0">
+                <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                card
+            </h1>
+            <div class="overflow-y-auto pr-2 pb-2 flex-grow">
+                
+                    <div class="mb-5">
+                        <label class="block text-sm font-bold text-slate-700 mb-2" for="input-word list">word list</label>
+                        <input type="text" id="input-word list" data-var="word list" class="var-input w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors shadow-sm" placeholder="Enter word list...">
+                    </div>
+                    <div class="mb-5">
+                        <label class="block text-sm font-bold text-slate-700 mb-2" for="input-target language">target language</label>
+                        <input type="text" id="input-target language" data-var="target language" class="var-input w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors shadow-sm" placeholder="Enter target language...">
+                    </div>
+            </div>
+        </div>
+
+        <!-- Right: Output & Copy -->
+        <div class="w-full md:w-7/12 p-6 md:p-8 flex flex-col h-[50vh] md:h-auto md:max-h-[85vh]">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center shrink-0">
+                <svg class="w-5 h-5 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                Completed Prompt
+            </h2>
+            
+            <textarea id="output" readonly 
+                class="flex-grow w-full p-5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-base md:text-lg leading-relaxed shadow-inner mb-6 font-medium text-slate-700"></textarea>
+            
+            <button id="copyBtn" 
+                class="shrink-0 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-blue-500/50 flex items-center justify-center text-lg active:scale-[0.98]">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                Copy Text
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        
+                const rawTemplate = decodeURIComponent("%3Cinstruction%3E%0A%20%20%20%20%3Crole%3EExpert%20Graphic%20Designer%20%26%20Visual%20Educator%3C%2Frole%3E%0A%20%20%20%20%3Ctask%3ECreate%20a%20vocabulary%20grid%20for%20language%20learning%20based%20on%20a%20specific%20minimalist%20line-art%20style.%3C%2Ftask%3E%0A%20%20%20%20%0A%20%20%20%20%3Cvisual_style%3E%0A%20%20%20%20%20%20%20%20%3Ctechnique%3EMinimalist%20flat%20line%20drawing%2C%20vector%20illustration%20style%3C%2Ftechnique%3E%0A%20%20%20%20%20%20%20%20%3Cline_weight%3EConsistent%20medium-thin%20black%20strokes%3C%2Fline_weight%3E%0A%20%20%20%20%20%20%20%20%3Ccolor_palette%3EHigh-contrast%20black%20and%20white%2C%20little%20bit%20of%20pastel%20color(10%25)%3C%2Fcolor_palette%3E%0A%20%20%20%20%20%20%20%20%3Cshading%3ENo%20gradients%2C%20minimal%20solid%20black%20fills%20for%20hair%20or%20clothing%20accents%20only%3C%2Fshading%3E%0A%20%20%20%20%20%20%20%20%3Ccharacter_design%3ESimple%20facial%20features%20(dots%20for%20eyes%2C%20simple%20curves)%2C%20modern%20and%20trendy%20vibe%2C%20diverse%20poses%20(skating%2C%20reading%2C%20music%2C%20etc.)%3C%2Fcharacter_design%3E%0A%20%20%20%20%3C%2Fvisual_style%3E%0A%0A%20%20%20%20%3Clayout_specification%3E%0A%20%20%20%20%20%20%20%20%3Cgrid_format%3EStrict%204x4%20grid%20(16%20independent%20cells)%3C%2Fgrid_format%3E%0A%20%20%20%20%20%20%20%20%3Caspect_ratio%3E1%3A1%20Square%3C%2Faspect_ratio%3E%0A%20%20%20%20%20%20%20%20%3Cmargin%3EZero%20margin%20between%20cells%2C%20clean%20white%20background%20for%20each%20cell%3C%2Fmargin%3E%0A%20%20%20%20%20%20%20%20%3Ctext_overlay%3EPlace%20the%20corresponding%20word%20from%20%7B%7Bword%20list%7D%7D%20in%20%7B%7Btarget%20language%7D%7D%20at%20the%20bottom%20center%20of%20each%20cell%20in%20a%20clean%20sans-serif%20font.%3C%2Ftext_overlay%3E%0A%20%20%20%20%3C%2Flayout_specification%3E%0A%0A%20%20%20%20%3Ccontent_input%3E%0A%20%20%20%20%20%20%20%20%3Ctarget_language%3E%7B%7Btarget%20language%7D%7D%3C%2Ftarget_language%3E%0A%20%20%20%20%20%20%20%20%3Cword_list%3E%7B%7Bword%20list%7D%7D%3C%2Fword_list%3E%0A%20%20%20%20%3C%2Fcontent_input%3E%0A%0A%20%20%20%20%3Cfinal_output_guideline%3E%0A%20%20%20%20%20%20%20%20Generate%20a%20single%20cohesive%20image%20containing%2016%20individual%20minimalist%20illustrations.%20%0A%20%20%20%20%20%20%20%20Each%20illustration%20must%20represent%20one%20word%20from%20the%20list.%20%0A%20%20%20%20%20%20%20%20Maintain%20the%20exact%20hand-drawn%20aesthetic%20from%20the%20reference%3A%20simple%2C%20clean%2C%20and%20expressive%20lines.%0A%20%20%20%20%3C%2Ffinal_output_guideline%3E%0A%3C%2Finstruction%3E%0A");
+                const inputs = document.querySelectorAll('.var-input');
+                const output = document.getElementById('output');
+                const copyBtn = document.getElementById('copyBtn');
+
+                function updateOutput() {
+                    let result = rawTemplate;
+                    inputs.forEach(input => {
+                        const varName = input.dataset.var;
+                        let value = '';
+                        
+                        // Handle different input types for string building
+                        if (input.dataset.type === 'checkbox' || input.type === 'checkbox') {
+                            const isKorean = document.documentElement.lang === 'ko';
+                            value = input.checked ? (isKorean ? '예' : 'Yes') : (isKorean ? '아니오' : 'No');
+                        } else {
+                            value = input.value;
+                        }
+
+                        // Fallback to placeholder if empty
+                        if (value === '') value = '{{' + varName + '}}';
+                        
+                        const regex = new RegExp('\\{\\{' + varName + '\\}\\}', 'g');
+                        result = result.replace(regex, value);
+                    });
+                    output.value = result;
+                }
+
+                inputs.forEach(input => input.addEventListener('input', updateOutput));
+                // Add change listener specifically for selects and checkboxes to ensure rapid firing
+                inputs.forEach(input => input.addEventListener('change', updateOutput));
+
+                copyBtn.addEventListener('click', () => {
+                    output.select();
+                    output.setSelectionRange(0, 99999);
+
+                    try {
+                        const successful = document.execCommand('copy');
+                        if(successful) {
+                            const originalHTML = copyBtn.innerHTML;
+                            copyBtn.innerHTML = '<svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Copied!';
+                            copyBtn.classList.replace('bg-blue-600', 'bg-emerald-600');
+                            copyBtn.classList.replace('hover:bg-blue-700', 'hover:bg-emerald-700');
+                            copyBtn.classList.replace('ring-blue-500', 'ring-emerald-500');
+                            
+                            setTimeout(() => {
+                                copyBtn.innerHTML = originalHTML;
+                                copyBtn.classList.replace('bg-emerald-600', 'bg-blue-600');
+                                copyBtn.classList.replace('hover:bg-emerald-700', 'hover:bg-blue-700');
+                                copyBtn.classList.replace('ring-emerald-500', 'ring-blue-500');
+                            }, 2000);
+                        } else {
+                            alert('Failed to copy. Please select and copy manually.');
+                        }
+                    } catch (err) {
+                        alert('Copy function is not supported in this browser.');
+                    }
+                    
+                    window.getSelection().removeAllRanges();
+                    output.blur();
+                });
+
+                updateOutput();
+            
+    </script>
+</body>
+</html>
