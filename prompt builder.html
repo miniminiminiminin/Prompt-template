@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Template HTML Maker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen p-4 md:p-8 font-sans text-slate-800 flex items-center justify-center">
+
+    <div class="w-full max-w-5xl bg-white rounded-2xl shadow-xl overflow-hidden">
+        <!-- 헤더 영역 -->
+        <div class="bg-indigo-600 p-6 md:p-8 text-white relative">
+            
+            <!-- 언어 선택 셀렉트 -->
+            <div class="absolute top-6 right-6 md:top-8 md:right-8">
+                <select id="languageSelect" class="bg-indigo-700 text-white text-sm rounded-lg border border-indigo-500 focus:ring-2 focus:ring-white focus:outline-none py-1.5 px-3 cursor-pointer appearance-none pr-8 relative">
+                    <option value="en">English</option>
+                    <option value="ko">한국어</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
+                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                </div>
+            </div>
+
+            <h1 class="text-2xl md:text-3xl font-bold mb-2 flex items-center pr-24">
+                <svg class="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                <span data-i18n="title">Prompt Template HTML Maker</span>
+            </h1>
+            <p class="text-indigo-100 opacity-90 pr-20" data-i18n="desc">Enter a template, configure variables, and create your own prompt generator.</p>
+        </div>
+
+        <!-- 메인 콘텐츠 영역 -->
+        <div class="p-6 md:p-8 flex flex-col gap-8">
+            
+            <!-- Step 1. 템플릿 입력 -->
+            <div class="space-y-3">
+                <label for="templateInput" class="block text-lg font-bold text-slate-800 flex items-center">
+                    <span class="bg-indigo-100 text-indigo-700 w-7 h-7 rounded-full inline-flex items-center justify-center text-sm mr-2 shadow-sm">1</span>
+                    <span data-i18n="step1">Enter Prompt Template</span>
+                </label>
+                <p class="text-sm text-slate-500 ml-9" data-i18n="step1desc">Wrap variables in {{ }}. (e.g., {{topic}}, {{tone}})</p>
+                <textarea id="templateInput" 
+                    class="w-full h-40 p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-y text-base transition-shadow bg-slate-50"
+                    data-i18n-ph="templatePh" placeholder="Write a blog post.&#13;&#10;Topic: {{topic}}&#13;&#10;Target: {{target}}&#13;&#10;Make it {{tone}}."></textarea>
+            </div>
+
+            <hr class="border-slate-200">
+
+            <!-- Step 2. 변수 유형 설정 -->
+            <div class="space-y-3">
+                <label class="block text-lg font-bold text-slate-800 flex items-center">
+                    <span class="bg-indigo-100 text-indigo-700 w-7 h-7 rounded-full inline-flex items-center justify-center text-sm mr-2 shadow-sm">2</span>
+                    <span data-i18n="step2">Configure Variable Types</span>
+                </label>
+                <p class="text-sm text-slate-500 ml-9 mb-2" data-i18n="step2desc">Select the input type for each detected variable.</p>
+                
+                <div class="bg-slate-50 rounded-xl p-1 border border-slate-200 ml-0 md:ml-9">
+                    <!-- 테이블 헤더 -->
+                    <div class="hidden md:grid grid-cols-12 gap-4 p-3 bg-slate-100 text-sm font-bold text-slate-600 rounded-t-lg">
+                        <div class="col-span-3" data-i18n="thVar">Variable</div>
+                        <div class="col-span-4" data-i18n="thType">Input Type</div>
+                        <div class="col-span-5" data-i18n="thOption">Options (if needed)</div>
+                    </div>
+                    <!-- 변수 리스트 -->
+                    <div id="variableList" class="divide-y divide-slate-200 flex flex-col gap-2 p-2">
+                        <div class="p-4 text-center text-slate-500 italic text-sm" data-i18n="waitingVars">Variables will be detected automatically when you type.</div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-slate-200">
+
+            <!-- Step 3. 설정 및 다운로드 -->
+            <div class="space-y-4">
+                <label class="block text-lg font-bold text-slate-800 flex items-center">
+                    <span class="bg-indigo-100 text-indigo-700 w-7 h-7 rounded-full inline-flex items-center justify-center text-sm mr-2 shadow-sm">3</span>
+                    <span data-i18n="step3">File Settings & Download</span>
+                </label>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 ml-0 md:ml-9">
+                    <div class="space-y-1">
+                        <label for="pageTitleInput" class="block text-sm font-semibold text-slate-700" data-i18n="pageTitleLabel">Page Title</label>
+                        <input type="text" id="pageTitleInput" 
+                            class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow text-base"
+                            data-i18n-ph="pageTitlePh" placeholder="My Prompt Generator" value="My Prompt Generator">
+                    </div>
+
+                    <div class="space-y-1">
+                        <label for="filenameInput" class="block text-sm font-semibold text-slate-700" data-i18n="fileNameLabel">File Name</label>
+                        <div class="relative">
+                            <input type="text" id="filenameInput" 
+                                class="w-full pl-4 pr-16 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow text-base bg-white"
+                                data-i18n-ph="fileNamePh" placeholder="my_prompt" value="my_prompt">
+                            <span class="absolute right-4 top-3.5 text-slate-400 font-bold pointer-events-none">.html</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 ml-0 md:ml-9">
+                    <button id="downloadBtn" disabled
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-xl shadow-md hover:shadow-lg transition-all flex justify-center items-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-indigo-600 text-lg">
+                        <svg class="w-6 h-6 group-not-disabled:group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span data-i18n="downloadBtn">Download HTML File</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- 언어 팩 (i18n) ---
+        const i18n = {
+            en: {
+                title: "Prompt Template HTML Maker",
+                desc: "Enter a template, configure variables, and create your own prompt generator.",
+                step1: "1. Enter Prompt Template",
+                step1desc: "Wrap variables in {{ }}. (e.g., {{topic}}, {{tone}})",
+                templatePh: "Write a blog post.\nTopic: {{topic}}\nTarget Audience: {{target}}\nTone: Make it {{tone}}.",
+                step2: "2. Configure Variable Types",
+                step2desc: "Select the input type for each detected variable (10 available types).",
+                thVar: "Variable Name",
+                thType: "Input Type",
+                thOption: "Options (if needed)",
+                waitingVars: "Variables will be detected automatically when you type.",
+                noVars: "No variables detected. Only fixed text will be generated.",
+                optPh: "Comma separated (e.g. A, B, C)",
+                step3: "3. File Settings & Download",
+                pageTitleLabel: "Generated Page Title (Browser Tab Name)",
+                pageTitlePh: "My Prompt Generator",
+                fileNameLabel: "Save as HTML File Name",
+                fileNamePh: "my_prompt",
+                downloadBtn: "Download HTML File",
+                
+                // Variable Types
+                type_text: "Short Text",
+                type_textarea: "Long Text (Multi-line)",
+                type_select: "Dropdown (Options)",
+                type_number: "Number",
+                type_checkbox: "Checkbox (Yes/No)",
+                type_date: "Date",
+                type_time: "Time",
+                type_range: "Slider (1-10)",
+                type_color: "Color Picker",
+                type_url: "URL / Link",
+
+                // Generated HTML internal strings
+                genNoVars: "No variables set.<br>Only fixed text will be displayed.",
+                genInputPh: "Enter ",
+                genOutputTitle: "Completed Prompt",
+                genCopyBtn: "Copy Text",
+                genCopySuccess: "Copied!",
+                genCopyFail: "Failed to copy. Please select and copy manually.",
+                genCopyUnsupp: "Copy function is not supported in this browser."
+            },
+            ko: {
+                title: "프롬프트 템플릿 HTML 메이커",
+                desc: "템플릿을 입력하고 변수 유형을 설정하여 나만의 프롬프트 생성기를 만드세요.",
+                step1: "1. 프롬프트 템플릿 입력",
+                step1desc: "변수로 사용할 단어를 {{ }} 로 감싸주세요. (예: {{주제}}, {{어조}})",
+                templatePh: "블로그 포스팅을 작성해줘.\n주제: {{주제}}\n타겟 독자: {{타겟}}\n글의 어조: {{어조}}하게 작성해줘.",
+                step2: "2. 변수 입력 유형 설정",
+                step2desc: "감지된 변수들의 입력 방식을 선택하세요 (10가지 유형 지원).",
+                thVar: "변수명",
+                thType: "입력 유형",
+                thOption: "추가 옵션 설정",
+                waitingVars: "템플릿을 입력하면 자동으로 변수가 감지됩니다.",
+                noVars: "감지된 변수가 없습니다. 고정된 텍스트만 복사됩니다.",
+                optPh: "쉼표로 구분 (예: 밝은, 차분한, 전문적인)",
+                step3: "3. 파일 설정 및 다운로드",
+                pageTitleLabel: "생성될 페이지 제목 (웹 브라우저 탭 이름)",
+                pageTitlePh: "나만의 프롬프트 생성기",
+                fileNameLabel: "저장될 HTML 파일명 (확장자 제외)",
+                fileNamePh: "my_prompt",
+                downloadBtn: "HTML 파일 다운로드",
+
+                // Variable Types
+                type_text: "단문 텍스트 (기본)",
+                type_textarea: "장문 텍스트 (여러 줄)",
+                type_select: "드롭다운 (선택형)",
+                type_number: "숫자 입력",
+                type_checkbox: "체크박스 (예/아니오)",
+                type_date: "날짜 선택",
+                type_time: "시간 선택",
+                type_range: "슬라이더 (1~10)",
+                type_color: "색상 선택",
+                type_url: "URL 링크 입력",
+
+                // Generated HTML internal strings
+                genNoVars: "설정된 변수가 없습니다.<br>입력 폼 없이 고정된 텍스트만 표시됩니다.",
+                genInputPh: "", 
+                genOutputTitle: "완성된 프롬프트",
+                genCopyBtn: "텍스트 복사하기",
+                genCopySuccess: "복사 성공!",
+                genCopyFail: "복사에 실패했습니다. 직접 선택하여 복사해주세요.",
+                genCopyUnsupp: "이 브라우저에서는 복사 기능을 지원하지 않습니다."
+            }
+        };
+
+        const availableTypes = ['text', 'textarea', 'select', 'number', 'checkbox', 'date', 'time', 'range', 'color', 'url'];
+        let currentLang = 'en';
+
+        // DOM Elements
+        const languageSelect = document.getElementById('languageSelect');
+        const templateInput = document.getElementById('templateInput');
+        const variableList = document.getElementById('variableList');
+        const filenameInput = document.getElementById('filenameInput');
+        const pageTitleInput = document.getElementById('pageTitleInput');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        // State: [{ name: 'topic', type: 'text', options: '' }, ...]
+        let detectedVariables = [];
+        const regex = /\{\{(.+?)\}\}/g;
+
+        // Language toggle
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+            
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) el.textContent = i18n[lang][key];
+            });
+
+            document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+                const key = el.getAttribute('data-i18n-ph');
+                if (i18n[lang][key]) el.setAttribute('placeholder', i18n[lang][key]);
+            });
+
+            if (pageTitleInput.value === i18n['en'].pageTitlePh || pageTitleInput.value === i18n['ko'].pageTitlePh) {
+                pageTitleInput.value = i18n[lang].pageTitlePh;
+            }
+
+            renderVariableList(); // Re-render with new language text
+        }
+
+        languageSelect.addEventListener('change', (e) => setLanguage(e.target.value));
+
+        // Input monitoring
+        templateInput.addEventListener('input', () => {
+            const text = templateInput.value;
+            const matches = [...text.matchAll(regex)];
+            const newNames = [...new Set(matches.map(match => match[1].trim()))];
+
+            // Retain existing configs, drop removed ones, add new ones
+            const updatedVariables = [];
+            newNames.forEach(name => {
+                const existing = detectedVariables.find(v => v.name === name);
+                if (existing) {
+                    updatedVariables.push(existing);
+                } else {
+                    updatedVariables.push({ name: name, type: 'text', options: '' });
+                }
+            });
+
+            detectedVariables = updatedVariables;
+            
+            downloadBtn.disabled = text.trim().length === 0;
+            renderVariableList();
+        });
+
+        // Update list UI
+        function renderVariableList() {
+            variableList.innerHTML = '';
+            
+            if (templateInput.value.trim().length === 0) {
+                variableList.innerHTML = `<div class="p-4 text-center text-slate-500 italic text-sm">${i18n[currentLang].waitingVars}</div>`;
+                return;
+            }
+            if (detectedVariables.length === 0) {
+                variableList.innerHTML = `<div class="p-4 text-center text-slate-500 italic text-sm">${i18n[currentLang].noVars}</div>`;
+                return;
+            }
+
+            detectedVariables.forEach((v, index) => {
+                const row = document.createElement('div');
+                row.className = 'grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 p-4 md:p-3 bg-white border border-slate-200 rounded-lg md:rounded-none md:border-0 fade-in items-center';
+                
+                // Variable Name
+                const nameCol = document.createElement('div');
+                nameCol.className = 'col-span-1 md:col-span-3 font-bold text-indigo-600 flex items-center break-all';
+                nameCol.innerHTML = `<span class="bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-md text-sm mr-2">${v.name}</span>`;
+                
+                // Type Select
+                const typeCol = document.createElement('div');
+                typeCol.className = 'col-span-1 md:col-span-4';
+                let selectOptions = availableTypes.map(t => 
+                    `<option value="${t}" ${v.type === t ? 'selected' : ''}>${i18n[currentLang][`type_${t}`]}</option>`
+                ).join('');
+                
+                typeCol.innerHTML = `
+                    <select class="w-full bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none">
+                        ${selectOptions}
+                    </select>
+                `;
+                const typeSelect = typeCol.querySelector('select');
+
+                // Options Input
+                const optCol = document.createElement('div');
+                optCol.className = 'col-span-1 md:col-span-5 transition-opacity duration-200';
+                optCol.innerHTML = `
+                    <input type="text" class="w-full bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none placeholder-slate-400" 
+                        placeholder="${i18n[currentLang].optPh}" value="${v.options}">
+                `;
+                const optInput = optCol.querySelector('input');
+                
+                // Show/hide options input based on type
+                const toggleOptDisplay = (type) => {
+                    if (type === 'select') {
+                        optCol.style.opacity = '1';
+                        optCol.style.pointerEvents = 'auto';
+                        optInput.disabled = false;
+                    } else {
+                        optCol.style.opacity = '0.3';
+                        optCol.style.pointerEvents = 'none';
+                        optInput.disabled = true;
+                        optInput.value = '';
+                    }
+                };
+                toggleOptDisplay(v.type);
+
+                // Event Listeners for updating state
+                typeSelect.addEventListener('change', (e) => {
+                    detectedVariables[index].type = e.target.value;
+                    toggleOptDisplay(e.target.value);
+                });
+
+                optInput.addEventListener('input', (e) => {
+                    detectedVariables[index].options = e.target.value;
+                });
+
+                row.appendChild(nameCol);
+                row.appendChild(typeCol);
+                row.appendChild(optCol);
+                variableList.appendChild(row);
+            });
+        }
+
+        // HTML Generator
+        function generateTargetHTML(template, variables, title, lang) {
+            const t = i18n[lang];
+            let inputsHTML = '';
+            
+            if (variables.length === 0) {
+                inputsHTML = `<p class="text-gray-500 italic p-4 bg-white rounded-lg border border-gray-200">${t.genNoVars}</p>`;
+            } else {
+                variables.forEach(v => {
+                    const safeV = v.name.replace(/"/g, '&quot;');
+                    const placeholderText = lang === 'en' ? `${t.genInputPh}${v.name}...` : `${v.name} 입력...`;
+                    
+                    let inputEl = '';
+                    const baseClass = "var-input w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors shadow-sm";
+                    
+                    switch(v.type) {
+                        case 'textarea':
+                            inputEl = `<textarea id="input-${safeV}" data-var="${safeV}" rows="3" class="${baseClass} resize-y" placeholder="${placeholderText}"></textarea>`;
+                            break;
+                        case 'select':
+                            const opts = v.options.split(',').map(o => o.trim()).filter(o => o);
+                            let optionsHtml = opts.map(o => `<option value="${o.replace(/"/g, '&quot;')}">${o}</option>`).join('');
+                            if (!optionsHtml) optionsHtml = `<option value="">${lang === 'ko' ? '옵션 없음' : 'No options'}</option>`;
+                            inputEl = `<select id="input-${safeV}" data-var="${safeV}" class="${baseClass} bg-white cursor-pointer">${optionsHtml}</select>`;
+                            break;
+                        case 'checkbox':
+                            const labelStr = lang === 'ko' ? '포함/예 (Yes)' : 'Yes / Include';
+                            inputEl = `
+                                <label class="flex items-center cursor-pointer mt-2 p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors w-max">
+                                    <input type="checkbox" id="input-${safeV}" data-var="${safeV}" data-type="checkbox" class="var-input w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                    <span class="ml-3 text-slate-700 font-medium">${labelStr}</span>
+                                </label>`;
+                            break;
+                        case 'range':
+                            inputEl = `
+                                <div class="flex items-center gap-4 bg-white p-3 border border-slate-200 rounded-lg">
+                                    <input type="range" min="1" max="10" value="5" id="input-${safeV}" data-var="${safeV}" class="var-input flex-grow h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" oninput="this.nextElementSibling.innerText = this.value">
+                                    <span class="font-bold w-6 text-center text-blue-700 bg-blue-50 py-1 rounded">5</span>
+                                </div>`;
+                            break;
+                        case 'color':
+                            inputEl = `<div class="flex items-center gap-3"><input type="color" id="input-${safeV}" data-var="${safeV}" class="var-input w-12 h-12 rounded cursor-pointer border-0 bg-transparent p-0"><span class="text-sm text-slate-500">${lang==='ko'?'색상을 선택하세요':'Choose color'}</span></div>`;
+                            break;
+                        default: // text, number, date, time, url
+                            inputEl = `<input type="${v.type}" id="input-${safeV}" data-var="${safeV}" class="${baseClass}" placeholder="${placeholderText}">`;
+                    }
+
+                    inputsHTML += `
+                    <div class="mb-5">
+                        <label class="block text-sm font-bold text-slate-700 mb-2" for="input-${safeV}">${v.name}</label>
+                        ${inputEl}
+                    </div>`;
+                });
+            }
+
+            const scriptContent = `
+                const rawTemplate = decodeURIComponent("${encodeURIComponent(template)}");
+                const inputs = document.querySelectorAll('.var-input');
+                const output = document.getElementById('output');
+                const copyBtn = document.getElementById('copyBtn');
+
+                function updateOutput() {
+                    let result = rawTemplate;
+                    inputs.forEach(input => {
+                        const varName = input.dataset.var;
+                        let value = '';
+                        
+                        // Handle different input types for string building
+                        if (input.dataset.type === 'checkbox' || input.type === 'checkbox') {
+                            const isKorean = document.documentElement.lang === 'ko';
+                            value = input.checked ? (isKorean ? '예' : 'Yes') : (isKorean ? '아니오' : 'No');
+                        } else {
+                            value = input.value;
+                        }
+
+                        // Fallback to placeholder if empty
+                        if (value === '') value = '{{' + varName + '}}';
+                        
+                        const regex = new RegExp('\\\\{\\\\{' + varName + '\\\\}\\\\}', 'g');
+                        result = result.replace(regex, value);
+                    });
+                    output.value = result;
+                }
+
+                inputs.forEach(input => input.addEventListener('input', updateOutput));
+                // Add change listener specifically for selects and checkboxes to ensure rapid firing
+                inputs.forEach(input => input.addEventListener('change', updateOutput));
+
+                copyBtn.addEventListener('click', () => {
+                    output.select();
+                    output.setSelectionRange(0, 99999);
+
+                    try {
+                        const successful = document.execCommand('copy');
+                        if(successful) {
+                            const originalHTML = copyBtn.innerHTML;
+                            copyBtn.innerHTML = '<svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> ${t.genCopySuccess}';
+                            copyBtn.classList.replace('bg-blue-600', 'bg-emerald-600');
+                            copyBtn.classList.replace('hover:bg-blue-700', 'hover:bg-emerald-700');
+                            copyBtn.classList.replace('ring-blue-500', 'ring-emerald-500');
+                            
+                            setTimeout(() => {
+                                copyBtn.innerHTML = originalHTML;
+                                copyBtn.classList.replace('bg-emerald-600', 'bg-blue-600');
+                                copyBtn.classList.replace('hover:bg-emerald-700', 'hover:bg-blue-700');
+                                copyBtn.classList.replace('ring-emerald-500', 'ring-blue-500');
+                            }, 2000);
+                        } else {
+                            alert('${t.genCopyFail}');
+                        }
+                    } catch (err) {
+                        alert('${t.genCopyUnsupp}');
+                    }
+                    
+                    window.getSelection().removeAllRanges();
+                    output.blur();
+                });
+
+                updateOutput();
+            `;
+
+            return `<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>${title}</title>
+    <script src="https://cdn.tailwindcss.com"><\/script>
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 font-sans p-4 md:p-8 flex justify-center items-start">
+    <div class="w-full max-w-6xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row mt-2 md:mt-8">
+        
+        <!-- Left: Variable Form -->
+        <div class="w-full md:w-5/12 bg-slate-50 p-6 md:p-8 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col max-h-screen md:max-h-[85vh]">
+            <h1 class="text-xl font-extrabold text-slate-800 mb-6 flex items-center shrink-0">
+                <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                ${title}
+            </h1>
+            <div class="overflow-y-auto pr-2 pb-2 flex-grow">
+                ${inputsHTML}
+            </div>
+        </div>
+
+        <!-- Right: Output & Copy -->
+        <div class="w-full md:w-7/12 p-6 md:p-8 flex flex-col h-[50vh] md:h-auto md:max-h-[85vh]">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center shrink-0">
+                <svg class="w-5 h-5 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                ${t.genOutputTitle}
+            </h2>
+            
+            <textarea id="output" readonly 
+                class="flex-grow w-full p-5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-base md:text-lg leading-relaxed shadow-inner mb-6 font-medium text-slate-700"></textarea>
+            
+            <button id="copyBtn" 
+                class="shrink-0 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-blue-500/50 flex items-center justify-center text-lg active:scale-[0.98]">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                ${t.genCopyBtn}
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        ${scriptContent}
+    <\/script>
+</body>
+</html>`;
+        }
+
+        downloadBtn.addEventListener('click', () => {
+            const template = templateInput.value;
+            let pageTitle = pageTitleInput.value.trim() || i18n[currentLang].pageTitlePh;
+            
+            let rawFileName = filenameInput.value.trim() || 'my_prompt';
+            rawFileName = rawFileName.replace(/\.html$/i, '');
+            const finalFileName = rawFileName + '.html';
+
+            const finalHTML = generateTargetHTML(template, detectedVariables, pageTitle, currentLang);
+
+            const blob = new Blob([finalHTML], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = finalFileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            setTimeout(() => URL.revokeObjectURL(url), 100);
+        });
+
+        // Initialize App
+        setLanguage('en');
+    </script>
+</body>
+</html>
+
+
