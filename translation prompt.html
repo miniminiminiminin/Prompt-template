@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Translation prompt</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 font-sans p-4 md:p-8 flex justify-center items-start">
+    <div class="w-full max-w-6xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row mt-2 md:mt-8">
+        
+        <!-- Left: Variable Form -->
+        <div class="w-full md:w-5/12 bg-slate-50 p-6 md:p-8 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col max-h-screen md:max-h-[85vh]">
+            <h1 class="text-xl font-extrabold text-slate-800 mb-6 flex items-center shrink-0">
+                <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                Translation prompt
+            </h1>
+            <div class="overflow-y-auto pr-2 pb-2 flex-grow">
+                
+                    <div class="mb-5">
+                        <label class="block text-sm font-bold text-slate-700 mb-2" for="input-원문">원문</label>
+                        <textarea id="input-원문" data-var="원문" rows="3" class="var-input w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors shadow-sm resize-y" placeholder="Enter 원문..."></textarea>
+                    </div>
+                    <div class="mb-5">
+                        <label class="block text-sm font-bold text-slate-700 mb-2" for="input-요구사항">요구사항</label>
+                        <input type="text" id="input-요구사항" data-var="요구사항" class="var-input w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors shadow-sm" placeholder="Enter 요구사항...">
+                    </div>
+                    <div class="mb-5">
+                        <label class="block text-sm font-bold text-slate-700 mb-2" for="input-샘플">샘플</label>
+                        <textarea id="input-샘플" data-var="샘플" rows="3" class="var-input w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors shadow-sm resize-y" placeholder="Enter 샘플..."></textarea>
+                    </div>
+            </div>
+        </div>
+
+        <!-- Right: Output & Copy -->
+        <div class="w-full md:w-7/12 p-6 md:p-8 flex flex-col h-[50vh] md:h-auto md:max-h-[85vh]">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center shrink-0">
+                <svg class="w-5 h-5 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                Completed Prompt
+            </h2>
+            
+            <textarea id="output" readonly 
+                class="flex-grow w-full p-5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-base md:text-lg leading-relaxed shadow-inner mb-6 font-medium text-slate-700"></textarea>
+            
+            <button id="copyBtn" 
+                class="shrink-0 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-blue-500/50 flex items-center justify-center text-lg active:scale-[0.98]">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                Copy Text
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        
+                const rawTemplate = decodeURIComponent("%0A%3CSystem_Architecture%20version%3D%221.0%22%20codename%3D%22Context_Aware_Expert_Translator%22%3E%0A%3CInstruction%3E%0A%EB%8B%B9%EC%8B%A0%EC%9D%80%20%ED%85%8D%EC%8A%A4%ED%8A%B8%EC%9D%98%20%ED%91%9C%EB%A9%B4%EC%A0%81%20%EC%9D%98%EB%AF%B8%EB%A5%BC%20%EB%84%98%EC%96%B4%2C%20%EB%AC%B8%ED%99%94%EC%A0%81%20%EB%B0%B0%EA%B2%BD%EA%B3%BC%20%EB%82%B4%ED%8F%AC%EB%90%9C%20%EC%9D%98%EB%AF%B8%EA%B9%8C%EC%A7%80%20%ED%86%B5%EB%8B%AC%ED%95%98%EC%97%AC%20%EB%B2%88%EC%97%AD%EC%9D%84%20%EC%88%98%ED%96%89%ED%95%98%EB%8A%94%20%EC%A0%84%EB%AC%B8%20%EB%B2%88%EC%97%AD%EA%B0%80%EC%9E%85%EB%8B%88%EB%8B%A4.%20%EC%A0%9C%EA%B3%B5%EB%90%98%EB%8A%94%20%3C%EC%9B%90%EB%AC%B8%3E%EC%9D%84%20%EB%B2%88%EC%97%AD%ED%95%98%EB%90%98%2C%20%EC%84%A0%ED%83%9D%EC%A0%81%EC%9C%BC%EB%A1%9C%20%EC%A3%BC%EC%96%B4%EC%A7%80%EB%8A%94%20%3C%EC%9A%94%EA%B5%AC%EC%82%AC%ED%95%AD%3E%EA%B3%BC%20%3C%EC%83%98%ED%94%8C%3E%EC%9D%84%20%EB%B0%94%ED%83%95%EC%9C%BC%EB%A1%9C%20%EC%B5%9C%EC%A0%81%EC%9D%98%20%EB%AC%B8%EC%B2%B4%EC%99%80%20%EC%96%B4%EC%A1%B0%EB%A5%BC%20%EC%A0%81%EC%9A%A9%ED%95%B4%EC%95%BC%20%ED%95%A9%EB%8B%88%EB%8B%A4.%20%EA%B2%B0%EA%B3%BC%EB%AC%BC%EC%9D%80%20%EC%9B%90%EB%AC%B8%EC%9D%98%20%EC%9D%98%EB%AF%B8%EB%A5%BC%20%ED%9B%BC%EC%86%90%ED%95%98%EC%A7%80%20%EC%95%8A%EC%9C%BC%EB%A9%B4%EC%84%9C%EB%8F%84%20%EB%8F%84%EC%B0%A9%EC%96%B4%20%EB%8F%85%EC%9E%90%EC%97%90%EA%B2%8C%20%EC%9E%90%EC%97%B0%EC%8A%A4%EB%9F%BD%EA%B2%8C%20%EC%9D%BD%ED%98%80%EC%95%BC%20%ED%95%A9%EB%8B%88%EB%8B%A4.%0A%3C%2FInstruction%3E%0A%0A%3CContext%3E%0A%3CTranslation_Principles%3E%0A%3CPrinciple%3E%EC%A2%8B%EC%9D%80%20%EB%B2%88%EC%97%AD%EC%9D%80%20%EC%9B%90%EC%B2%9C%EC%96%B4%EC%9D%98%20%EC%96%B4%EA%B0%90%EC%9D%84%20%EC%82%B4%EB%A6%AC%EB%8A%94%20%EB%8F%99%EC%8B%9C%EC%97%90%20%EB%B2%88%EC%97%AD%EC%96%B4%EB%A1%9C%EC%84%9C%EC%9D%98%20%EC%9E%90%EC%97%B0%EC%8A%A4%EB%9F%AC%EC%9B%80(%EA%B0%80%EB%8F%85%EC%84%B1)%EC%9D%84%20%EA%B7%B9%EB%8C%80%ED%99%94%ED%95%98%EB%8A%94%20%EA%B2%83%EC%9E%85%EB%8B%88%EB%8B%A4.%3C%2FPrinciple%3E%0A%3CPrinciple%3E%EB%8B%A8%EC%96%B4%20%EB%8C%80%20%EB%8B%A8%EC%96%B4%EC%9D%98%20%EA%B8%B0%EA%B3%84%EC%A0%81%20%EC%A7%81%EC%97%AD%EC%9D%84%20%ED%94%BC%ED%95%98%EA%B3%A0%2C%20%EB%AC%B8%EB%A7%A5%EC%9D%84%20%ED%86%B5%EC%A7%B8%EB%A1%9C%20%EC%9D%B8%EC%8B%9D%ED%95%98%EC%97%AC%20%EB%8B%A4%EC%9D%98%EC%96%B4%EC%99%80%20%EA%B4%80%EC%9A%A9%EC%A0%81%20%ED%91%9C%ED%98%84%EC%9D%84%20%EC%A0%95%ED%99%95%ED%9E%88%20%EC%B9%98%ED%99%98%ED%95%98%EC%8B%AD%EC%8B%9C%EC%98%A4.%3C%2FPrinciple%3E%0A%3CPrinciple%3E%EC%98%A4%EC%97%AD%EC%9D%84%20%EB%B0%A9%EC%A7%80%ED%95%98%EA%B8%B0%20%EC%9C%84%ED%95%B4%20%EB%B2%88%EC%97%AD%20%EC%99%84%EB%A3%8C%20%EC%A0%84%20%EC%96%B4%EC%83%89%ED%95%9C%20%EA%B5%AC%EB%AC%B8%EC%9D%B4%EB%82%98%20%EB%85%BC%EB%A6%AC%EC%A0%81%20%EC%98%A4%EB%A5%98%EA%B0%80%20%EC%97%86%EB%8A%94%EC%A7%80%20%EC%9E%90%EC%B2%B4%20%EA%B5%90%EC%A0%95%EC%9D%84%20%EA%B1%B0%EC%B3%90%EC%95%BC%20%ED%95%A9%EB%8B%88%EB%8B%A4.%3C%2FPrinciple%3E%0A%3C%2FTranslation_Principles%3E%0A%3C%2FContext%3E%0A%0A%3CInputs%3E%0A%3CVariable%20name%3D%22%EC%9B%90%EB%AC%B8%22%20required%3D%22true%22%3E%0A%3CDescription%3E%EB%B2%88%EC%97%AD%ED%95%B4%EC%95%BC%20%ED%95%A0%20%EC%9B%90%EB%B3%B8%20%ED%85%8D%EC%8A%A4%ED%8A%B8%EC%9E%85%EB%8B%88%EB%8B%A4.%20(%ED%95%84%EC%88%98)%3C%2FDescription%3E%0A%7B%7B%EC%9B%90%EB%AC%B8%7D%7D%0A%3C%2FVariable%3E%0A%3CVariable%20name%3D%22%EC%9A%94%EA%B5%AC%EC%82%AC%ED%95%AD%22%20required%3D%22false%22%3E%0A%3CDescription%3E%EC%96%B4%EC%A1%B0(%EC%A1%B4%EB%8C%93%EB%A7%90%2F%EB%B0%98%EB%A7%90)%2C%20%ED%8A%B9%EC%A0%95%20%EC%9A%A9%EC%96%B4%2C%20%EB%8C%80%EC%83%81%20%EB%8F%85%EC%9E%90%EC%B8%B5%2C%20%EB%B2%88%EC%97%AD%20%EB%AA%A9%EC%A0%81%20%EB%93%B1%20%EC%82%AC%EC%9A%A9%EC%9E%90%EC%9D%98%20%ED%8A%B9%EB%B3%84%ED%95%9C%20%EC%A7%80%EC%B9%A8%EC%9E%85%EB%8B%88%EB%8B%A4.%20%EC%A3%BC%EC%96%B4%EC%A7%88%20%EA%B2%BD%EC%9A%B0%20%EC%B5%9C%EC%9A%B0%EC%84%A0%EC%9C%BC%EB%A1%9C%20%EC%A0%81%EC%9A%A9%ED%95%A9%EB%8B%88%EB%8B%A4.%3C%2FDescription%3E%0A%7B%7B%EC%9A%94%EA%B5%AC%EC%82%AC%ED%95%AD%7D%7D%0A%3C%2FVariable%3E%0A%3CVariable%20name%3D%22%EC%83%98%ED%94%8C%22%20required%3D%22false%22%3E%0A%3CDescription%3E%EB%B2%88%EC%97%AD%20%EA%B2%B0%EA%B3%BC%EB%AC%BC%EC%9D%B4%20%EB%9D%84%EC%96%B4%EC%95%BC%20%ED%95%A0%20%EA%B5%AC%EC%B2%B4%EC%A0%81%EC%9D%B8%20%EB%AC%B8%EC%B2%B4%2C%20%ED%86%A4%EC%95%A4%EB%A7%A4%EB%84%88%2C%20%EC%96%B4%ED%9C%98%20%EC%88%98%EC%A4%80%EC%9D%84%20%EB%B3%B4%EC%97%AC%EC%A3%BC%EB%8A%94%20%EC%B0%B8%EA%B3%A0%20%ED%85%8D%EC%8A%A4%ED%8A%B8%EC%9E%85%EB%8B%88%EB%8B%A4.%20%EC%A3%BC%EC%96%B4%EC%A7%88%20%EA%B2%BD%EC%9A%B0%20%ED%95%B4%EB%8B%B9%20%EC%8A%A4%ED%83%80%EC%9D%BC%EA%B3%BC%20%EC%99%84%EB%B2%BD%ED%9E%88%20%EB%8F%99%EA%B8%B0%ED%99%94%ED%95%A9%EB%8B%88%EB%8B%A4.%3C%2FDescription%3E%0A%7B%7B%EC%83%98%ED%94%8C%7D%7D%0A%3C%2FVariable%3E%0A%3C%2FInputs%3E%0A%0A%3COperational_Protocol%3E%0A%3CStep%20id%3D%221%22%20name%3D%22Source_Analysis%22%3E%0A%7B%7B%EC%9B%90%EB%AC%B8%7D%7D%EC%9D%84%20%EC%9D%BD%EA%B3%A0%20%EC%A0%84%EC%B2%B4%20%EB%AC%B8%EB%A7%A5%2C%20%ED%99%94%EC%9E%90%EC%9D%98%20%EC%9D%98%EB%8F%84%2C%20%ED%85%8D%EC%8A%A4%ED%8A%B8%EC%9D%98%20%EC%9E%A5%EB%A5%B4%20%EB%B0%8F%20%EC%82%AC%ED%9A%8C%EB%AC%B8%ED%99%94%EC%A0%81%20%EB%B0%B0%EA%B2%BD%EC%9D%84%20%ED%8C%8C%EC%95%85%ED%95%A9%EB%8B%88%EB%8B%A4.%0A%3C%2FStep%3E%0A%3CStep%20id%3D%222%22%20name%3D%22Constraint_Mapping%22%3E%0A%7B%7B%EC%9A%94%EA%B5%AC%EC%82%AC%ED%95%AD%7D%7D%EC%9D%B4%20%EC%A0%9C%EA%B3%B5%EB%90%98%EC%97%88%EB%8A%94%EC%A7%80%20%ED%99%95%EC%9D%B8%ED%95%98%EA%B3%A0%2C%20%EB%B2%88%EC%97%AD%20%EC%8B%9C%20%EC%A7%80%EC%BC%9C%EC%95%BC%20%ED%95%A0%20%EC%A0%88%EB%8C%80%20%EA%B7%9C%EC%B9%99%EC%9C%BC%EB%A1%9C%20%EC%84%A4%EC%A0%95%ED%95%A9%EB%8B%88%EB%8B%A4.%20%7B%7B%EC%83%98%ED%94%8C%7D%7D%EC%9D%B4%20%EC%9E%88%EB%8B%A4%EB%A9%B4%20%EC%83%98%ED%94%8C%EC%9D%98%20%EB%AC%B8%EC%9E%A5%20%EA%B5%AC%EC%A1%B0%EC%99%80%20%EC%96%B4%ED%9C%98%EC%A0%81%20%ED%8A%B9%EC%84%B1%EC%9D%84%20%EC%B6%94%EC%B6%9C%ED%95%98%EC%97%AC%20%EB%B2%88%EC%97%AD%20%ED%86%A4%EC%9D%84%20%EA%B2%B0%EC%A0%95%ED%95%A9%EB%8B%88%EB%8B%A4.%0A%3C%2FStep%3E%0A%3CStep%20id%3D%223%22%20name%3D%22Draft_Translation%22%3E%0A%EC%9B%90%EB%AC%B8%EC%9D%98%20%EC%9D%98%EB%AF%B8%EC%A0%81%20%EC%B6%A9%EC%8B%A4%EC%84%B1%EA%B3%BC%20%EB%8F%84%EC%B0%A9%EC%96%B4%EC%9D%98%20%EC%9C%A0%EB%A0%A4%ED%95%9C%20%EA%B0%80%EB%8F%85%EC%84%B1%EC%9D%84%20%EB%AA%A8%EB%91%90%20%EB%A7%8C%EC%A1%B1%ED%95%98%EB%8A%94%201%EC%B0%A8%20%EB%B2%88%EC%97%AD%EB%B3%B8%EC%9D%84%20%EC%9E%91%EC%84%B1%ED%95%A9%EB%8B%88%EB%8B%A4.%0A%3C%2FStep%3E%0A%3CStep%20id%3D%224%22%20name%3D%22Self_Correction%22%3E%0A%EC%98%A4%EC%97%AD%2C%20%EB%B6%80%EC%9E%90%EC%97%B0%EC%8A%A4%EB%9F%AC%EC%9A%B4%20%EC%A7%81%EC%97%AD%2C%20%EB%9D%84%EC%96%B4%EC%93%B0%EA%B8%B0%20%EB%B0%8F%20%EB%A7%9E%EC%B6%A4%EB%B2%95%20%EC%98%A4%EB%A5%98%EA%B0%80%20%EC%97%86%EB%8A%94%EC%A7%80%20%EC%9E%90%EC%B2%B4%20%EA%B2%80%EC%88%98%ED%95%98%EA%B3%A0%20%EC%88%98%EC%A0%95%ED%95%A9%EB%8B%88%EB%8B%A4.%0A%3C%2FStep%3E%0A%3C%2FOperational_Protocol%3E%0A%0A%3COutput_Spec%3E%0A%3CRule%3E%EB%B2%88%EC%97%AD%20%EA%B3%BC%EC%A0%95%EC%9D%B4%EB%82%98%20%EB%B6%80%EC%97%B0%20%EC%84%A4%EB%AA%85%2C%20%EC%9D%B8%EC%82%AC%EB%A7%90%20%EB%93%B1%EC%9D%84%20%EC%9D%BC%EC%A0%88%20%ED%8F%AC%ED%95%A8%ED%95%98%EC%A7%80%20%EB%A7%88%EC%8B%AD%EC%8B%9C%EC%98%A4.%3C%2FRule%3E%0A%3CRule%3E%EC%98%A4%EC%A7%81%20%EC%B5%9C%EC%A2%85%20%EB%B2%88%EC%97%AD%EB%90%9C%20%ED%85%8D%EC%8A%A4%ED%8A%B8%20%EA%B2%B0%EA%B3%BC%EB%AC%BC%EB%A7%8C%EC%9D%84%20%EC%B6%9C%EB%A0%A5%ED%95%98%EC%8B%AD%EC%8B%9C%EC%98%A4.%3C%2FRule%3E%0A%3C%2FOutput_Spec%3E%0A%0A%3CEvaluation%3E%0A%3CCheck%3E%EC%9B%90%EB%AC%B8%EC%9D%98%20%EB%AF%B8%EB%AC%98%ED%95%9C%20%EC%9D%98%EB%AF%B8%EA%B0%80%20%EB%88%84%EB%9D%BD%EB%90%98%EA%B1%B0%EB%82%98%20%EC%99%9C%EA%B3%A1%EB%90%98%EC%A7%80%20%EC%95%8A%EC%95%98%EB%8A%94%EA%B0%80%3F%3C%2FCheck%3E%0A%3CCheck%3E%EB%AA%A9%ED%91%9C%20%EC%96%B8%EC%96%B4%EC%9D%98%20%EC%9B%90%EC%96%B4%EB%AF%BC%EC%9D%B4%20%EC%9D%BD%EC%97%88%EC%9D%84%20%EB%95%8C%20%EB%AC%B8%EC%9E%A5%EC%9D%B4%20%EB%A7%89%ED%9E%98%EC%97%86%EC%9D%B4%20%EB%A7%A4%EB%81%84%EB%9F%AC%EC%9A%B4%EA%B0%80%3F%3C%2FCheck%3E%0A%3CCheck%3E%EC%A0%9C%EA%B3%B5%EB%90%9C%20%3C%EC%9A%94%EA%B5%AC%EC%82%AC%ED%95%AD%3E%EA%B3%BC%20%3C%EC%83%98%ED%94%8C%3E%EC%9D%98%20%EA%B0%80%EC%9D%B4%EB%93%9C%EB%9D%BC%EC%9D%B8%EC%9D%B4%20%EC%A0%95%ED%99%95%ED%9E%88%20%EB%B0%98%EC%98%81%EB%90%98%EC%97%88%EB%8A%94%EA%B0%80%3F%3C%2FCheck%3E%0A%3C%2FEvaluation%3E%0A%3C%2FSystem_Architecture%3E");
+                const inputs = document.querySelectorAll('.var-input');
+                const output = document.getElementById('output');
+                const copyBtn = document.getElementById('copyBtn');
+
+                function updateOutput() {
+                    let result = rawTemplate;
+                    inputs.forEach(input => {
+                        const varName = input.dataset.var;
+                        let value = '';
+                        
+                        // Handle different input types for string building
+                        if (input.dataset.type === 'checkbox' || input.type === 'checkbox') {
+                            const isKorean = document.documentElement.lang === 'ko';
+                            value = input.checked ? (isKorean ? '예' : 'Yes') : (isKorean ? '아니오' : 'No');
+                        } else {
+                            value = input.value;
+                        }
+
+                        // Fallback to placeholder if empty
+                        if (value === '') value = '{{' + varName + '}}';
+                        
+                        const regex = new RegExp('\\{\\{' + varName + '\\}\\}', 'g');
+                        result = result.replace(regex, value);
+                    });
+                    output.value = result;
+                }
+
+                inputs.forEach(input => input.addEventListener('input', updateOutput));
+                // Add change listener specifically for selects and checkboxes to ensure rapid firing
+                inputs.forEach(input => input.addEventListener('change', updateOutput));
+
+                copyBtn.addEventListener('click', () => {
+                    output.select();
+                    output.setSelectionRange(0, 99999);
+
+                    try {
+                        const successful = document.execCommand('copy');
+                        if(successful) {
+                            const originalHTML = copyBtn.innerHTML;
+                            copyBtn.innerHTML = '<svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Copied!';
+                            copyBtn.classList.replace('bg-blue-600', 'bg-emerald-600');
+                            copyBtn.classList.replace('hover:bg-blue-700', 'hover:bg-emerald-700');
+                            copyBtn.classList.replace('ring-blue-500', 'ring-emerald-500');
+                            
+                            setTimeout(() => {
+                                copyBtn.innerHTML = originalHTML;
+                                copyBtn.classList.replace('bg-emerald-600', 'bg-blue-600');
+                                copyBtn.classList.replace('hover:bg-emerald-700', 'hover:bg-blue-700');
+                                copyBtn.classList.replace('ring-emerald-500', 'ring-blue-500');
+                            }, 2000);
+                        } else {
+                            alert('Failed to copy. Please select and copy manually.');
+                        }
+                    } catch (err) {
+                        alert('Copy function is not supported in this browser.');
+                    }
+                    
+                    window.getSelection().removeAllRanges();
+                    output.blur();
+                });
+
+                updateOutput();
+            
+    </script>
+</body>
+</html>
