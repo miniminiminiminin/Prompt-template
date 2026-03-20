@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>딸깍 디자인</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 font-sans p-4 md:p-8 flex justify-center items-start">
+    <div class="w-full max-w-6xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row mt-2 md:mt-8">
+        
+        <!-- Left: Variable Form -->
+        <div class="w-full md:w-5/12 bg-slate-50 p-6 md:p-8 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col max-h-screen md:max-h-[85vh]">
+            <h1 class="text-xl font-extrabold text-slate-800 mb-6 flex items-center shrink-0">
+                <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                딸깍 디자인
+            </h1>
+            <div class="overflow-y-auto pr-2 pb-2 flex-grow">
+                
+                    <div class="mb-5">
+                        <label class="block text-sm font-bold text-slate-700 mb-2" for="input-디자인사조">디자인사조</label>
+                        <input type="text" id="input-디자인사조" data-var="디자인사조" class="var-input w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors shadow-sm" placeholder="Enter 디자인사조...">
+                    </div>
+                    <div class="mb-5">
+                        <label class="block text-sm font-bold text-slate-700 mb-2" for="input-레퍼런스_사진">레퍼런스_사진</label>
+                        <input type="text" id="input-레퍼런스_사진" data-var="레퍼런스_사진" class="var-input w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors shadow-sm" placeholder="Enter 레퍼런스_사진...">
+                    </div>
+                    <div class="mb-5">
+                        <label class="block text-sm font-bold text-slate-700 mb-2" for="input-요구사항">요구사항</label>
+                        <textarea id="input-요구사항" data-var="요구사항" rows="3" class="var-input w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors shadow-sm resize-y" placeholder="Enter 요구사항..."></textarea>
+                    </div>
+            </div>
+        </div>
+
+        <!-- Right: Output & Copy -->
+        <div class="w-full md:w-7/12 p-6 md:p-8 flex flex-col h-[50vh] md:h-auto md:max-h-[85vh]">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center shrink-0">
+                <svg class="w-5 h-5 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                Completed Prompt
+            </h2>
+            
+            <textarea id="output" readonly 
+                class="flex-grow w-full p-5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-base md:text-lg leading-relaxed shadow-inner mb-6 font-medium text-slate-700"></textarea>
+            
+            <button id="copyBtn" 
+                class="shrink-0 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-blue-500/50 flex items-center justify-center text-lg active:scale-[0.98]">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                Copy Text
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        
+                const rawTemplate = decodeURIComponent("%3CSystem_Architecture%20version%3D%222.0%22%20codename%3D%22Dynamic_Design_Trend_UI_Generator%22%3E%0A%20%3CInstruction%3E%0A%20%20%3CPersona%3E%EC%B5%9C%EC%83%81%EC%9C%84%20UI%2FUX%20%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C%20%EC%97%94%EC%A7%80%EB%8B%88%EC%96%B4%20%EB%B0%8F%20%EB%94%94%EC%9E%90%EC%9D%B8%20%EC%8B%9C%EC%8A%A4%ED%85%9C%20%EC%95%84%ED%82%A4%ED%85%8D%ED%8A%B8%3C%2FPersona%3E%0A%20%20%3CGoal%3E%EC%9E%85%EB%A0%A5%EB%90%9C%20%7B%7B%EB%94%94%EC%9E%90%EC%9D%B8%EC%82%AC%EC%A1%B0%7D%7D%EC%9D%98%20%EC%8B%9C%EA%B0%81%EC%A0%81%20%EC%B2%A0%ED%95%99%EA%B3%BC%20%EB%AC%BC%EB%A6%AC%20%EB%B2%95%EC%B9%99%EC%9D%84%20%EC%8B%AC%EC%B8%B5%20%EB%B6%84%EC%84%9D%ED%95%98%EA%B3%A0%2C%20%EC%9D%B4%EB%A5%BC%20%7B%7B%EB%A0%88%ED%8D%BC%EB%9F%B0%EC%8A%A4_%EC%82%AC%EC%A7%84%7D%7D%EC%9D%98%20%EA%B5%AC%EC%B2%B4%EC%A0%81%20%ED%8A%B9%EC%83%89%EA%B3%BC%20%EA%B2%B0%ED%95%A9%ED%95%98%EC%97%AC%20%7B%7B%EC%9A%94%EA%B5%AC%EC%82%AC%ED%95%AD%7D%7D%EC%97%90%20%EC%99%84%EB%B2%BD%ED%9E%88%20%EB%B6%80%ED%95%A9%ED%95%98%EB%8A%94%20React%20%EC%9B%B9%20%EC%95%A0%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98%20%EC%BD%94%EB%93%9C%EB%A5%BC%20%EC%83%9D%EC%84%B1%ED%95%98%EB%9D%BC.%3C%2FGoal%3E%0A%20%20%3CCore_Directives%3E%0A%20%20%201.%20%EC%BD%94%EB%93%9C%EB%A5%BC%20%EC%9E%91%EC%84%B1%ED%95%98%EA%B8%B0%20%EC%A0%84%2C%20%EB%B0%98%EB%93%9C%EC%8B%9C%20%EC%9A%94%EA%B5%AC%EB%90%9C%20%EB%94%94%EC%9E%90%EC%9D%B8%20%EC%82%AC%EC%A1%B0%EC%9D%98%20%EC%8B%9C%EA%B0%81%EC%A0%81%20%ED%8A%B9%EC%84%B1%EA%B3%BC%20%EC%A0%9C%EC%95%BD%20%EC%82%AC%ED%95%AD%EC%9D%84%20%EB%AA%85%ED%99%95%ED%9E%88%20%EC%A0%95%EC%9D%98(Grounding)%ED%95%B4%EC%95%BC%20%ED%95%9C%EB%8B%A4.%0A%20%20%202.%20%EC%9D%BC%EB%B0%98%EC%A0%81%EC%9D%B4%EA%B3%A0%20%EB%BB%94%ED%95%9C%20UI%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83%EC%9D%84%20%EC%A7%80%EC%96%91%ED%95%98%EA%B3%A0%2C%20%ED%95%B4%EB%8B%B9%20%EC%82%AC%EC%A1%B0%EC%99%80%20%EB%A0%88%ED%8D%BC%EB%9F%B0%EC%8A%A4%EC%9D%98%20'%ED%8A%B9%EC%83%89(Signature%20Style)'%EC%9D%84%20UI%20%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8%EC%97%90%20%EC%A0%81%EA%B7%B9%EC%A0%81%EC%9C%BC%EB%A1%9C%20%EB%B0%98%EC%98%81%ED%95%9C%EB%8B%A4.%0A%20%20%203.%20%EC%BD%94%EB%93%9C%EB%8A%94%20%EB%B3%B5%EC%82%AC-%EB%B6%99%EC%97%AC%EB%84%A3%EA%B8%B0%EB%A1%9C%20%EC%A6%89%EC%8B%9C%20%EC%8B%A4%ED%96%89%20%EA%B0%80%EB%8A%A5%ED%95%9C%20%EB%8B%A8%EC%9D%BC%20%ED%8C%8C%EC%9D%BC(Single-file)%20%ED%98%95%ED%83%9C%EB%A1%9C%20%EC%A0%9C%EA%B3%B5%ED%95%9C%EB%8B%A4.%0A%20%20%204.%204.%20%EC%9E%85%EB%A0%A5%EB%90%9C%20%7B%7B%EB%94%94%EC%9E%90%EC%9D%B8%EC%82%AC%EC%A1%B0%7D%7D%EC%9D%98%20%ED%8A%B9%EC%84%B1%EC%9D%84%20%EC%B5%9C%EB%8C%80%ED%95%9C%20%EC%82%B4%EB%A6%AC%EB%90%98%2C%20%ED%95%B4%EB%8B%B9%20%EC%8A%A4%ED%83%80%EC%9D%BC%EC%9D%B4%20%3CFundamental_Design_Principles%3E%EC%9D%98%20%EA%B0%80%EB%8F%85%EC%84%B1%EC%9D%B4%EB%82%98%20%EC%82%AC%EC%9A%A9%EC%84%B1%EC%9D%84%20%EC%8B%AC%EA%B0%81%ED%95%98%EA%B2%8C%20%ED%9B%BC%EC%86%90%ED%95%A0%20%EA%B2%BD%EC%9A%B0%20%EB%B0%98%EB%93%9C%EC%8B%9C%20%EA%B8%B0%EB%B3%B8%20%EC%9B%90%EC%B9%99%EC%9D%84%20%EC%9A%B0%EC%84%A0%ED%95%98%EC%97%AC%20%ED%83%80%ED%98%91%EC%A0%90(Graceful%20Degradation)%EC%9D%84%20%EC%B0%BE%EC%95%84%20%EC%BD%94%EB%93%9C%EB%A1%9C%20%EA%B5%AC%ED%98%84%ED%95%9C%EB%8B%A4.%0A%20%20%3C%2FCore_Directives%3E%0A%20%20%3CFundamental_Design_Principles%3E%0A%20%20-%20CRAP%20%EC%9B%90%EC%B9%99%3A%20%EB%8C%80%EB%B9%84(Contrast)%2C%20%EB%B0%98%EB%B3%B5(Repetition)%2C%20%EC%A0%95%EB%A0%AC(Alignment)%2C%20%EA%B7%BC%EC%A0%91%EC%84%B1(Proximity)%EC%9D%84%20%EC%97%84%EA%B2%A9%ED%9E%88%20%EC%A7%80%ED%82%AC%20%EA%B2%83.%0A%20%20-%20%EC%8B%9C%EA%B0%81%EC%A0%81%20%EC%9C%84%EA%B3%84(Visual%20Hierarchy)%3A%20%EC%A4%91%EC%9A%94%EB%8F%84%EC%97%90%20%EB%94%B0%EB%9D%BC%20%ED%83%80%EC%9D%B4%ED%8F%AC%EA%B7%B8%EB%9E%98%ED%94%BC%20%ED%81%AC%EA%B8%B0%2C%20%ED%8F%B0%ED%8A%B8%20%EC%9B%A8%EC%9D%B4%ED%8A%B8%2C%20%EC%97%AC%EB%B0%B1(Margin%2FPadding)%EC%9D%84%20%EC%B0%A8%EB%93%B1%20%EC%A0%81%EC%9A%A9%ED%95%A0%20%EA%B2%83.%0A%20%20-%20%EC%A0%91%EA%B7%BC%EC%84%B1(Accessibility)%3A%20%ED%85%8D%EC%8A%A4%ED%8A%B8%EC%99%80%20%EB%B0%B0%EA%B2%BD%20%EA%B0%84%EC%9D%98%20%EB%AA%85%EB%8F%84%20%EB%8C%80%EB%B9%84%EB%A5%BC%20%ED%99%95%EB%B3%B4(WCAG%20AA%20%EC%88%98%EC%A4%80%20%EA%B6%8C%EC%9E%A5)%ED%95%98%EA%B3%A0%2C%20%EC%9D%B8%ED%84%B0%EB%9E%99%ED%8B%B0%EB%B8%8C%20%EC%9A%94%EC%86%8C%EB%8A%94%20%EC%B6%A9%EB%B6%84%ED%95%9C%20%ED%84%B0%EC%B9%98%20%EC%98%81%EC%97%AD%EC%9D%84%20%ED%99%95%EB%B3%B4%ED%95%A0%20%EA%B2%83.%0A%20%3C%2FFundamental_Design_Principles%3E%0A%20%3C%2FInstruction%3E%0A%0A%20%3CContext%3E%0A%20%20%3CInput_Variables%3E%0A%20%20%20%3CVariable%20name%3D%22%EB%94%94%EC%9E%90%EC%9D%B8%EC%82%AC%EC%A1%B0%22%3E%0A%20%20%20%20%7B%7B%EB%94%94%EC%9E%90%EC%9D%B8%EC%82%AC%EC%A1%B0%7D%7D%0A%20%20%20%3C%2FVariable%3E%0A%20%20%20%3CVariable%20name%3D%22%EB%A0%88%ED%8D%BC%EB%9F%B0%EC%8A%A4_%EC%82%AC%EC%A7%84%22%3E%0A%20%20%20%20%7B%7B%EB%A0%88%ED%8D%BC%EB%9F%B0%EC%8A%A4_%EC%82%AC%EC%A7%84%7D%7D%0A%20%20%20%3C%2FVariable%3E%0A%20%20%20%3CVariable%20name%3D%22%EC%9A%94%EA%B5%AC%EC%82%AC%ED%95%AD%22%3E%0A%20%20%20%20%7B%7B%EC%9A%94%EA%B5%AC%EC%82%AC%ED%95%AD%7D%7D%0A%20%20%20%3C%2FVariable%3E%0A%20%20%3C%2FInput_Variables%3E%0A%20%3C%2FContext%3E%0A%0A%20%3COperational_Protocol%3E%0A%20%20%3CStep%20id%3D%221%22%20name%3D%22Trend_Decomposition_and_Definition%22%3E%0A%20%20%20%3CAction%3E%0A%20%20%20%20%EC%9E%85%EB%A0%A5%EB%90%9C%20%7B%7B%EB%94%94%EC%9E%90%EC%9D%B8%EC%82%AC%EC%A1%B0%7D%7D%EC%9D%98%20%ED%95%B5%EC%8B%AC%20%EA%B0%9C%EB%85%90%2C%20%EC%97%AD%EC%82%AC%EC%A0%81%20%EB%B0%B0%EA%B2%BD%2C%20%EA%B7%B8%EB%A6%AC%EA%B3%A0%20%EC%9D%B4%EB%A5%BC%20UI%EB%A1%9C%20%EA%B5%AC%ED%98%84%ED%95%A0%20%EB%95%8C%20%ED%95%84%EC%9A%94%ED%95%9C%20%ED%95%B5%EC%8B%AC%20%EB%AC%BC%EB%A6%AC%20%EB%B2%95%EC%B9%99(%EB%B9%9B%2C%20%EA%B7%B8%EB%A6%BC%EC%9E%90%2C%20%EC%A7%88%EA%B0%90%2C%20Z-axis%20%EC%9C%84%EA%B3%84%2C%20%EC%97%AC%EB%B0%B1%20%EB%93%B1)%EC%9D%84%20%EA%B5%AC%EC%B2%B4%EC%A0%81%EC%9C%BC%EB%A1%9C%20%EB%B6%84%EC%84%9D%ED%95%98%EC%97%AC%20%EC%9A%94%EC%95%BD%ED%95%9C%EB%8B%A4.%0A%20%20%20%3C%2FAction%3E%0A%20%20%3C%2FStep%3E%0A%20%20%3CStep%20id%3D%222%22%20name%3D%22Reference_Feature_Extraction%22%3E%0A%20%20%20%3CAction%3E%0A%20%20%20%20%EC%A0%9C%EA%B3%B5%EB%90%9C%20%7B%7B%EB%A0%88%ED%8D%BC%EB%9F%B0%EC%8A%A4_%EC%82%AC%EC%A7%84%7D%7D%EC%9D%84%20%7B%7B%EB%94%94%EC%9E%90%EC%9D%B8%EC%82%AC%EC%A1%B0%7D%7D%EC%9D%98%20%EA%B4%80%EC%A0%90%EC%97%90%EC%84%9C%20%EB%B6%84%EC%84%9D%ED%95%98%EC%97%AC%2C%20%EC%8B%A4%EC%A0%9C%20%EC%BD%94%EB%93%9C%EC%97%90%20%EC%A0%81%EC%9A%A9%ED%95%A0%20%EA%B5%AC%EC%B2%B4%EC%A0%81%EC%9D%B8%20'%EB%94%94%EC%9E%90%EC%9D%B8%20%ED%86%A0%ED%81%B0(%EC%BB%AC%EB%9F%AC%20%ED%8C%94%EB%A0%88%ED%8A%B8%2C%20border-radius%2C%20%EA%B7%B8%EB%A6%BC%EC%9E%90%20px%20%EA%B0%92%2C%20%ED%83%80%EC%9D%B4%ED%8F%AC%EA%B7%B8%EB%9E%98%ED%94%BC%20%EC%8A%A4%ED%83%80%EC%9D%BC%20%EB%93%B1)'%EC%9D%84%20%EC%B6%94%EC%B6%9C%ED%95%9C%EB%8B%A4.%0A%20%20%20%3C%2FAction%3E%0A%20%20%3C%2FStep%3E%0A%20%20%3CStep%20id%3D%223%22%20name%3D%22Component_Mapping_and_Constraint_Setting%22%3E%0A%20%3CAction%3E%0A%20%20%7B%7B%EC%9A%94%EA%B5%AC%EC%82%AC%ED%95%AD%7D%7D%EC%9D%98%20%EA%B8%B0%EB%8A%A5%EB%93%A4%EC%9D%84%20UI%20%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8%EB%A1%9C%20%EB%A7%A4%ED%95%91%ED%95%9C%EB%8B%A4.%20%EC%9D%B4%EB%95%8C%202%EB%8B%A8%EA%B3%84%EC%97%90%EC%84%9C%20%EC%B6%94%EC%B6%9C%ED%95%9C%20%EB%94%94%EC%9E%90%EC%9D%B8%20%ED%86%A0%ED%81%B0%EC%9D%B4%20%3CFundamental_Design_Principles%3E%EC%9D%84%20%EC%9C%84%EB%B0%B0%ED%95%98%EC%A7%80%20%EC%95%8A%EB%8A%94%EC%A7%80%20%EA%B2%80%EC%A6%9D(%EC%98%88%3A%20%EB%8C%80%EB%B9%84%EA%B0%80%20%EB%84%88%EB%AC%B4%20%EB%82%AE%EC%A7%80%20%EC%95%8A%EC%9D%80%EC%A7%80)%ED%95%98%EC%97%AC%20%EC%88%98%EC%B9%98%EB%A5%BC%20%EC%A1%B0%EC%A0%95%ED%95%9C%EB%8B%A4.%20%EC%9D%B4%ED%9B%84%20%ED%95%B4%EB%8B%B9%20%EC%82%AC%EC%A1%B0%EB%A5%BC%20%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0%20%EC%9C%84%ED%95%9C%20'CSS%20Do's%20%26%20Don'ts'%EB%A5%BC%20%EC%84%A4%EC%A0%95%ED%95%9C%EB%8B%A4.%0A%20%3C%2FAction%3E%0A%20%3C%2FStep%3E%0A%20%20%3CStep%20id%3D%224%22%20name%3D%22Code_Generation%22%3E%0A%20%20%20%3CAction%3E%0A%20%20%20%20%EC%95%9E%EC%84%A0%201~3%EB%8B%A8%EA%B3%84%EC%9D%98%20%EB%B6%84%EC%84%9D%EA%B3%BC%20%EC%A0%95%EC%9D%98%EB%A5%BC%20%EB%B0%94%ED%83%95%EC%9C%BC%EB%A1%9C%20React%20%EC%BD%94%EB%93%9C%EB%A5%BC%20%EC%9E%91%EC%84%B1%ED%95%9C%EB%8B%A4.%20(%EC%9D%B8%EB%9D%BC%EC%9D%B8%20%EC%8A%A4%ED%83%80%EC%9D%BC%20%EB%98%90%EB%8A%94%20Tailwind%20CSS%20%EC%82%AC%EC%9A%A9)%0A%20%20%20%3C%2FAction%3E%0A%20%20%3C%2FStep%3E%0A%20%3C%2FOperational_Protocol%3E%0A%0A%20%3COutput_Spec%3E%0A%20%20%3CFormat%3E%0A%20%20%20%EA%B2%B0%EA%B3%BC%EB%AC%BC%EC%9D%80%20%EB%B0%98%EB%93%9C%EC%8B%9C%20%EB%8B%A4%EC%9D%8C%20%EB%91%90%20%EA%B5%AC%EC%A1%B0%EB%A1%9C%20%EB%82%98%EB%88%84%EC%96%B4%20%EC%B6%9C%EB%A0%A5%ED%95%B4%EC%95%BC%20%ED%95%9C%EB%8B%A4%3A%0A%20%20%20%0A%20%20%20%5B1.%20Design%20System%20Blueprint%5D%0A%20%20%20-%20%EC%82%AC%EC%A1%B0%20%EB%B6%84%EC%84%9D%20%EB%B0%8F%20%EC%BD%94%EC%96%B4%20%EC%B2%A0%ED%95%99%20(3~4%EC%A4%84%20%EC%9A%94%EC%95%BD)%0A%20%20%20-%20%EB%A0%88%ED%8D%BC%EB%9F%B0%EC%8A%A4%20%EA%B8%B0%EB%B0%98%20%EB%94%94%EC%9E%90%EC%9D%B8%20%ED%86%A0%ED%81%B0%20(Colors%2C%20Shadows%2C%20Typography%20%EB%93%B1%20%EA%B5%AC%EC%B2%B4%EC%A0%81%20%EC%88%98%EC%B9%98)%0A%20%20%20-%20CSS%20%EC%97%84%EA%B2%A9%20%EA%B7%9C%EC%A0%95%20(Do's%20%26%20Don'ts)%0A%0A%20%20%20%5B2.%20React%20Source%20Code%5D%0A%20%20%20%60%60%60jsx%0A%20%20%20%2F%2F%20%EC%99%84%EC%84%B1%EB%90%9C%20React%20%EC%BD%94%EB%93%9C%0A%3C%2FFormat%3E%0A%3C%2FOutput_Spec%3E%0A%0A%3CEvaluation%3E%0A%3CChecklist%3E%0A%0A%5B%20%5D%20%EC%B6%9C%EB%A0%A5%EB%90%9C%20UI%20%EA%B7%9C%EC%B9%99%EC%9D%B4%20%7B%7B%EB%94%94%EC%9E%90%EC%9D%B8%EC%82%AC%EC%A1%B0%7D%7D%EC%9D%98%20%EB%B3%B8%EC%A7%88%EC%A0%81%EC%9D%B8%20%EC%8B%9C%EA%B0%81%20%EC%B2%A0%ED%95%99%EC%9D%84%20%EC%A0%95%ED%99%95%ED%9E%88%20%EB%8B%B4%EA%B3%A0%20%EC%9E%88%EB%8A%94%EA%B0%80%3F%0A%0A%5B%20%5D%20%7B%7B%EB%A0%88%ED%8D%BC%EB%9F%B0%EC%8A%A4_%EC%82%AC%EC%A7%84%7D%7D%EC%9D%98%20%ED%8A%B9%EC%83%89%EC%9D%B4%20%EB%8B%A8%EC%88%9C%ED%95%9C%20%EC%83%89%EC%83%81%20%EB%B3%B5%EC%82%AC%EB%A5%BC%20%EB%84%98%EC%96%B4%2C%20%EC%A7%88%EA%B0%90%EC%9D%B4%EB%82%98%20%EA%B3%B5%EA%B0%84%EA%B0%90%EC%9D%98%20%ED%98%95%ED%83%9C%EB%A1%9C%20%EC%BD%94%EB%93%9C(CSS)%EC%97%90%20%EB%B0%98%EC%98%81%EB%90%98%EC%97%88%EB%8A%94%EA%B0%80%3F%0A%0A%5B%20%5D%20React%20%EC%BD%94%EB%93%9C%EA%B0%80%20%EC%97%90%EB%9F%AC%20%EC%97%86%EC%9D%B4%20%EB%8B%A8%EC%9D%BC%20%ED%8C%8C%EC%9D%BC%EB%A1%9C%20%EB%8F%99%EC%9E%91%ED%95%98%EB%A9%B0%2C%20%EC%82%AC%EC%A0%84%EC%97%90%20%EC%A0%95%EC%9D%98%ED%95%9C%20%EB%94%94%EC%9E%90%EC%9D%B8%20%EC%8B%9C%EC%8A%A4%ED%85%9C%20%EA%B7%9C%EC%B9%99%EC%9D%84%20%EC%9C%84%EB%B0%B0%ED%95%98%EC%A7%80%20%EC%95%8A%EC%95%98%EB%8A%94%EA%B0%80%3F%0A%5B%20%5D%20%EC%A0%81%EC%9A%A9%EB%90%9C%20%EB%94%94%EC%9E%90%EC%9D%B8%20%EC%82%AC%EC%A1%B0%EC%9D%98%20%EC%8A%A4%ED%83%80%EC%9D%BC%EC%9D%B4%20%EA%B8%B0%EB%B3%B8%20UI%2FUX%20%EC%9B%90%EC%B9%99(%EC%B6%A9%EB%B6%84%ED%95%9C%20%EB%8C%80%EB%B9%84%2C%20%EC%9D%BC%EA%B4%80%EB%90%9C%20%EC%A0%95%EB%A0%AC%2C%20%ED%84%B0%EC%B9%98%20%EC%98%81%EC%97%AD%20%EB%93%B1)%EC%9D%84%20%ED%9B%BC%EC%86%90%ED%95%98%EC%A7%80%20%EC%95%8A%EA%B3%A0%20%EC%A1%B0%ED%99%94%EB%A1%AD%EA%B2%8C%20%EA%B5%AC%ED%98%84%EB%90%98%EC%97%88%EB%8A%94%EA%B0%80%3F%0A%3C%2FChecklist%3E%0A%3C%2FEvaluation%3E%0A%3C%2FSystem_Architecture%3E%0A%5D%5D%3E%0A%3C%2FTarget_XML_Prompt%3E");
+                const inputs = document.querySelectorAll('.var-input');
+                const output = document.getElementById('output');
+                const copyBtn = document.getElementById('copyBtn');
+
+                function updateOutput() {
+                    let result = rawTemplate;
+                    inputs.forEach(input => {
+                        const varName = input.dataset.var;
+                        let value = '';
+                        
+                        // Handle different input types for string building
+                        if (input.dataset.type === 'checkbox' || input.type === 'checkbox') {
+                            const isKorean = document.documentElement.lang === 'ko';
+                            value = input.checked ? (isKorean ? '예' : 'Yes') : (isKorean ? '아니오' : 'No');
+                        } else {
+                            value = input.value;
+                        }
+
+                        // Fallback to placeholder if empty
+                        if (value === '') value = '{{' + varName + '}}';
+                        
+                        const regex = new RegExp('\\{\\{' + varName + '\\}\\}', 'g');
+                        result = result.replace(regex, value);
+                    });
+                    output.value = result;
+                }
+
+                inputs.forEach(input => input.addEventListener('input', updateOutput));
+                // Add change listener specifically for selects and checkboxes to ensure rapid firing
+                inputs.forEach(input => input.addEventListener('change', updateOutput));
+
+                copyBtn.addEventListener('click', () => {
+                    output.select();
+                    output.setSelectionRange(0, 99999);
+
+                    try {
+                        const successful = document.execCommand('copy');
+                        if(successful) {
+                            const originalHTML = copyBtn.innerHTML;
+                            copyBtn.innerHTML = '<svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Copied!';
+                            copyBtn.classList.replace('bg-blue-600', 'bg-emerald-600');
+                            copyBtn.classList.replace('hover:bg-blue-700', 'hover:bg-emerald-700');
+                            copyBtn.classList.replace('ring-blue-500', 'ring-emerald-500');
+                            
+                            setTimeout(() => {
+                                copyBtn.innerHTML = originalHTML;
+                                copyBtn.classList.replace('bg-emerald-600', 'bg-blue-600');
+                                copyBtn.classList.replace('hover:bg-emerald-700', 'hover:bg-blue-700');
+                                copyBtn.classList.replace('ring-emerald-500', 'ring-blue-500');
+                            }, 2000);
+                        } else {
+                            alert('Failed to copy. Please select and copy manually.');
+                        }
+                    } catch (err) {
+                        alert('Copy function is not supported in this browser.');
+                    }
+                    
+                    window.getSelection().removeAllRanges();
+                    output.blur();
+                });
+
+                updateOutput();
+            
+    </script>
+</body>
+</html>
