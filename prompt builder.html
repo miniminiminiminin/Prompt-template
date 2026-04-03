@@ -160,7 +160,9 @@
                 genCopyBtn: "Copy Text",
                 genCopySuccess: "Copied!",
                 genCopyFail: "Failed to copy. Please select and copy manually.",
-                genCopyUnsupp: "Copy function is not supported in this browser."
+                genCopyUnsupp: "Copy function is not supported in this browser.",
+                genOpenChatGPT: "ChatGPT",
+                genOpenGemini: "Gemini"
             },
             ko: {
                 title: "프롬프트 템플릿 HTML 메이커",
@@ -202,7 +204,9 @@
                 genCopyBtn: "텍스트 복사하기",
                 genCopySuccess: "복사 성공!",
                 genCopyFail: "복사에 실패했습니다. 직접 선택하여 복사해주세요.",
-                genCopyUnsupp: "이 브라우저에서는 복사 기능을 지원하지 않습니다."
+                genCopyUnsupp: "이 브라우저에서는 복사 기능을 지원하지 않습니다.",
+                genOpenChatGPT: "ChatGPT",
+                genOpenGemini: "Gemini"
             }
         };
 
@@ -405,6 +409,8 @@
                 const inputs = document.querySelectorAll('.var-input');
                 const output = document.getElementById('output');
                 const copyBtn = document.getElementById('copyBtn');
+                const chatgptBtn = document.getElementById('chatgptBtn');
+                const geminiBtn = document.getElementById('geminiBtn');
 
                 function updateOutput() {
                     let result = rawTemplate;
@@ -433,35 +439,53 @@
                 // Add change listener specifically for selects and checkboxes to ensure rapid firing
                 inputs.forEach(input => input.addEventListener('change', updateOutput));
 
-                copyBtn.addEventListener('click', () => {
+                function copyToClipboard() {
                     output.select();
                     output.setSelectionRange(0, 99999);
-
+                    let success = false;
                     try {
-                        const successful = document.execCommand('copy');
-                        if(successful) {
-                            const originalHTML = copyBtn.innerHTML;
-                            copyBtn.innerHTML = '<svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> ${t.genCopySuccess}';
-                            copyBtn.classList.replace('bg-blue-600', 'bg-emerald-600');
-                            copyBtn.classList.replace('hover:bg-blue-700', 'hover:bg-emerald-700');
-                            copyBtn.classList.replace('ring-blue-500', 'ring-emerald-500');
-                            
-                            setTimeout(() => {
-                                copyBtn.innerHTML = originalHTML;
-                                copyBtn.classList.replace('bg-emerald-600', 'bg-blue-600');
-                                copyBtn.classList.replace('hover:bg-emerald-700', 'hover:bg-blue-700');
-                                copyBtn.classList.replace('ring-emerald-500', 'ring-blue-500');
-                            }, 2000);
-                        } else {
-                            alert('${t.genCopyFail}');
-                        }
+                        success = document.execCommand('copy');
                     } catch (err) {
-                        alert('${t.genCopyUnsupp}');
+                        console.error('Copy failed', err);
                     }
-                    
                     window.getSelection().removeAllRanges();
                     output.blur();
+                    return success;
+                }
+
+                copyBtn.addEventListener('click', () => {
+                    const successful = copyToClipboard();
+                    if(successful) {
+                        const originalHTML = copyBtn.innerHTML;
+                        copyBtn.innerHTML = '<svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> ${t.genCopySuccess}';
+                        copyBtn.classList.replace('bg-blue-600', 'bg-emerald-600');
+                        copyBtn.classList.replace('hover:bg-blue-700', 'hover:bg-emerald-700');
+                        copyBtn.classList.replace('ring-blue-500', 'ring-emerald-500');
+                        
+                        setTimeout(() => {
+                            copyBtn.innerHTML = originalHTML;
+                            copyBtn.classList.replace('bg-emerald-600', 'bg-blue-600');
+                            copyBtn.classList.replace('hover:bg-emerald-700', 'hover:bg-blue-700');
+                            copyBtn.classList.replace('ring-emerald-500', 'ring-blue-500');
+                        }, 2000);
+                    } else {
+                        alert('${t.genCopyFail}');
+                    }
                 });
+
+                if (chatgptBtn) {
+                    chatgptBtn.addEventListener('click', () => {
+                        copyToClipboard();
+                        window.open('https://chatgpt.com/', '_blank');
+                    });
+                }
+
+                if (geminiBtn) {
+                    geminiBtn.addEventListener('click', () => {
+                        copyToClipboard();
+                        window.open('https://gemini.google.com/', '_blank');
+                    });
+                }
 
                 updateOutput();
             `;
@@ -505,10 +529,20 @@
                 class="flex-grow w-full p-5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-base md:text-lg leading-relaxed shadow-inner mb-6 font-medium text-slate-700"></textarea>
             
             <button id="copyBtn" 
-                class="shrink-0 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-blue-500/50 flex items-center justify-center text-lg active:scale-[0.98]">
+                class="shrink-0 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-blue-500/50 flex items-center justify-center text-lg active:scale-[0.98] mb-3">
                 <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                 ${t.genCopyBtn}
             </button>
+            <div class="flex gap-3 shrink-0">
+                <button id="chatgptBtn" class="flex-1 bg-[#10a37f] hover:bg-[#0e906f] text-white font-bold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center text-base active:scale-[0.98]">
+                    <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor"><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.073zm-8.934 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.053-1.6468zM4.3404 8.749a4.485 4.485 0 0 1 3.4115-1.973l-.0047.161--.0047.161v5.5233a.7948.7948 0 0 0 .3927.6813l5.8428 3.3685-2.02 1.1686a.071.071 0 0 1-.071 0l-4.802-2.7724A4.5088 4.5088 0 0 1 4.3404 8.749zm14.1566 6.5029a4.485 4.485 0 0 1-3.4116 1.9731l.0048-.161V11.541a.7948.7948 0 0 0-.3927-.6813L8.8547 7.4912l2.02-1.1686a.071.071 0 0 1 .071 0l4.802 2.7725a4.5088 4.5088 0 0 1 2.7493 6.1568zm1.8488-4.3807a4.4708 4.4708 0 0 1 .5346 3.0137l-.142-.0852-4.783-2.7582a.7712.7712 0 0 0-.7806 0L9.175 14.41v-2.3324a.0804.0804 0 0 1 .0332-.0615l4.8722-2.8093a4.4992 4.4992 0 0 1 6.053 1.6468zM12 15.474l-4.7925-2.763 4.7925-2.763 4.7925 2.763L12 15.474z"/></svg>
+                    ${t.genOpenChatGPT}
+                </button>
+                <button id="geminiBtn" class="flex-1 bg-[#1a73e8] hover:bg-[#155fc0] text-white font-bold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center text-base active:scale-[0.98]">
+                    <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor"><path d="M19 8l-1 2-2 1 2 1 1 2 1-2 2-1-2-1-1-2zm-8-3L9 1 7 5 3 7l4 2 2 4 2-4 4-2-4-2z"/></svg>
+                    ${t.genOpenGemini}
+                </button>
+            </div>
         </div>
 
     </div>
