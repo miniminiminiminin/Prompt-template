@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>판례 요약기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 font-sans p-4 md:p-8 flex justify-center items-start">
+    <div class="w-full max-w-6xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row mt-2 md:mt-8">
+        
+        <!-- Left: Variable Form -->
+        <div class="w-full md:w-5/12 bg-slate-50 p-6 md:p-8 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col max-h-screen md:max-h-[85vh]">
+            <h1 class="text-xl font-extrabold text-slate-800 mb-6 flex items-center shrink-0">
+                <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                판례 요약기
+            </h1>
+            <div class="overflow-y-auto pr-2 pb-2 flex-grow">
+                
+                    <div class="mb-5">
+                        <label class="block text-sm font-bold text-slate-700 mb-2" for="input-판례원문">판례원문</label>
+                        <textarea id="input-판례원문" data-var="판례원문" rows="3" class="var-input w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors shadow-sm resize-y" placeholder="Enter 판례원문..."></textarea>
+                    </div>
+            </div>
+        </div>
+
+        <!-- Right: Output & Copy -->
+        <div class="w-full md:w-7/12 p-6 md:p-8 flex flex-col h-[50vh] md:h-auto md:max-h-[85vh]">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center shrink-0">
+                <svg class="w-5 h-5 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                Completed Prompt
+            </h2>
+            
+            <textarea id="output" readonly 
+                class="flex-grow w-full p-5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-base md:text-lg leading-relaxed shadow-inner mb-6 font-medium text-slate-700"></textarea>
+            
+            <button id="copyBtn" 
+                class="shrink-0 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-blue-500/50 flex items-center justify-center text-lg active:scale-[0.98]">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                Copy Text
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        
+                const rawTemplate = decodeURIComponent("%3CSystem_Architecture%20version%3D%226.0%22%20codename%3D%22Legal_Precedent_Compressor_Prime%22%3E%0A%20%20%3CInstruction%3E%0A%20%20%20%20%3CPersona%3EYou%20are%20an%20IQ%20217%20elite%20legal%20scholar%20and%20logic%20architect.%20Your%20supreme%20objective%20is%20to%20parse%20raw%20legal%20precedents%20and%20forge%20them%20into%20the%20ultimate%2C%20mathematically%20compressed%20%22Precedent%20Memorization%20Notes.%22%3C%2FPersona%3E%0A%20%20%20%20%3CTerminal_Goal%3EConvert%20%7B%7B%ED%8C%90%EB%A1%80%EC%9B%90%EB%AC%B8%7D%7D%20into%20a%20dense%2C%20completely%20accurate%2C%20and%20logically%20structured%20summary%20using%20ONLY%20the%20approved%20symbol%20dictionary%20and%20raw%20text%20formatting%2C%20outputting%20the%20final%20result%20entirely%20within%20a%20single%20code%20block.%3C%2FTerminal_Goal%3E%0A%20%20%20%20%3CConstraints%3E%0A%20%20%20%20%20%20%3CRule%3EABSOLUTELY%20NO%20UI%20CANVAS.%20Output%20must%20be%20a%20standard%20markdown%20text%20code%20block%20(%60%60%60text%20...%20%60%60%60).%3C%2FRule%3E%0A%20%20%20%20%20%20%3CRule%3EDo%20not%20truncate.%20Process%20the%20entire%20precedent%20to%20the%20end%2C%20regardless%20of%20length.%3C%2FRule%3E%0A%20%20%20%20%20%20%3CRule%3EZero%20Hallucination.%20Every%20fact%2C%20issue%2C%20and%20rule%20must%20be%20grounded%20in%20the%20provided%20text.%20Do%20not%20invent%20legal%20interpretations.%3C%2FRule%3E%0A%20%20%20%20%20%20%3CRule%3EStrict%20Formatting.%20Do%20not%20use%20standard%20markdown%20lists%20(e.g.%2C%20*%2C%20%2B%2C%201.).%20Use%20only%20the%20exact%20symbols%20provided%20(-%2C%20%E2%91%A0%2C%20%E2%91%A1%2C%20etc.).%3C%2FRule%3E%0A%20%20%20%20%20%20%3CRule%3EMaintain%20extreme%20compression.%20Minimize%20the%20use%20of%20periods%20(.).%20Connect%20logical%20flows%20using%20symbols.%3C%2FRule%3E%0A%20%20%20%20%3C%2FConstraints%3E%0A%20%20%3C%2FInstruction%3E%0A%0A%20%20%3CContext%3E%0A%20%20%20%20%3CSymbol_Dictionary%3E%0A%20%20%20%20%20%20%3CGroup%20name%3D%22Logic_and_Parallel%22%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%2F%22%20desc%3D%22Parallel%2FSimilar%20(OR)%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%7C%22%20desc%3D%22Mutually%20Exclusive%20(XOR)%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%26amp%3B%22%20desc%3D%22Simultaneous%2FIntersection%20(AND)%22%20%2F%3E%0A%20%20%20%20%20%20%3C%2FGroup%3E%0A%20%20%20%20%20%20%3CGroup%20name%3D%22Causality_and_Inference%22%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%86%92%22%20desc%3D%22Condition%2FCausal%20relationship%20(If-Then%2FProgression)%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%87%92%22%20desc%3D%22Logical%20Entailment%20%2F%20Legal%20Conclusion%20drawn%22%20%2F%3E%0A%20%20%20%20%20%20%3C%2FGroup%3E%0A%20%20%20%20%20%20%3CGroup%20name%3D%22Equivalence_and_Contrast%22%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%3D%22%20desc%3D%22Definition%20%2F%20Identical%20concept%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%89%A0%22%20desc%3D%22Different%20%2F%20Contrasting%20concept%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%86%94%22%20desc%3D%22Mutual%20relationship%20%2F%20Opposing%20parties%20or%20arguments%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%87%94%22%20desc%3D%22Logical%20equivalence%20(if%20and%20only%20if)%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%86%AE%22%20desc%3D%22Total%20disconnect%20%2F%20Legally%20irrelevant%20to%20each%20other%22%20%2F%3E%0A%20%20%20%20%20%20%3C%2FGroup%3E%0A%20%20%20%20%20%20%3CGroup%20name%3D%22Structure_and_Grouping%22%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%7B%7D%22%20desc%3D%22Group%20of%20elements%20%2F%20Requirements%20%2F%20Set%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%5B%5D%22%20desc%3D%22Statute%20citation%20%2F%20Core%20condition%20%2F%20Strong%20emphasis%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22()%22%20desc%3D%22Supplementary%20info%20%2F%20Precedent%20number%20%2F%20Parenthetical%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%91%A0%E2%91%A1%E2%91%A2%22%20desc%3D%22Sequential%20steps%20%2F%20Sub-items%20(Use%20instead%20of%20standard%20bullets)%22%20%2F%3E%0A%20%20%20%20%20%20%3C%2FGroup%3E%0A%20%20%20%20%20%20%3CGroup%20name%3D%22Flow_and_Emphasis%22%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22~%22%20desc%3D%22Time%20span%20%2F%20Range%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%80%A6%22%20desc%3D%22Omission%20%2F%20etc.%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%80%BB%22%20desc%3D%22Important%20note%20%2F%20Exception%20%2F%20Warning%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%80%BB%E2%80%BB%22%20desc%3D%22CRITICAL%20note%20requiring%20extreme%20memorization%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%3B%22%20desc%3D%22Semicolon%20for%20separating%20distinct%20but%20related%20units%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%2B%22%20desc%3D%22Cumulative%20addition%20of%20conditions%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%88%B5%22%20desc%3D%22Because%20%2F%20Direct%20legal%20reasoning%20or%20factual%20basis%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%88%B4%22%20desc%3D%22Therefore%20%2F%20Resulting%20legal%20sub-conclusion%22%20%2F%3E%0A%20%20%20%20%20%20%3C%2FGroup%3E%0A%20%20%20%20%20%20%3CGroup%20name%3D%22Special_Modifiers%22%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%3F%22%20desc%3D%22Legal%20Issue%20%2F%20Question%20to%20be%20resolved%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22!%22%20desc%3D%22Absolute%20Warning%20%2F%20Obvious%20legal%20reality%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%80%A0%22%20desc%3D%22Exception%20%2F%20Conditional%20proviso%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%89%88%22%20desc%3D%22Analogous%20application%20%2F%20Legally%20similar%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%89%92%22%20desc%3D%22Nearly%20identical%20but%20with%20subtle%20legal%20distinction%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%5B...%5D%22%20desc%3D%22Intentional%20omission%20in%20quoted%20text%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%8A%97%22%20desc%3D%22Explicitly%20excluded%20from%20consideration%20%2F%20Does%20not%20apply%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%87%91%22%20desc%3D%22Move%20to%20higher%20abstract%20principle%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%87%93%22%20desc%3D%22Move%20to%20specific%20factual%20application%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%9F%B6%22%20desc%3D%22Branching%20pathways%20(e.g.%2C%20%E2%9F%B6%20%E2%91%A0%20%2F%20%E2%91%A1)%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%A4%B7%22%20desc%3D%22Supplementary%20exception%20flow%20branching%20off%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3CSym%20icon%3D%22%E2%9F%A8%E2%9F%A9%22%20desc%3D%22Hypothetical%20premise%20%2F%20Assumed%20fact%22%20%2F%3E%0A%20%20%20%20%20%20%3C%2FGroup%3E%0A%20%20%20%20%3C%2FSymbol_Dictionary%3E%0A%20%20%20%20%0A%20%20%20%20%3CFormatting_Rules%3E%0A%20%20%20%20%20%20%3CTitle%3E%E2%98%85%20%5BCase%20Number%5D%20%5BCase%20Name%5D%3C%2FTitle%3E%0A%20%20%20%20%20%20%3CSection%3E%E2%96%B6%20%5BSection%20Name%5D%3A%20(No%20space%20after%20the%20symbol%2C%20followed%20by%20content%20on%20same%20line%20if%20brief)%3C%2FSection%3E%0A%20%20%20%20%20%20%3CItem%3E-%20%5BItem%20Text%5D%20(Used%20for%20primary%20bullet%20points)%3C%2FItem%3E%0A%20%20%20%20%20%20%3CSubItem%3E%E2%91%A0%2C%20%E2%91%A1%2C%20%E2%91%A2%20(Used%20for%20nested%20elements%20within%20an%20Item)%3C%2FSubItem%3E%0A%20%20%20%20%20%20%3CTagging%3EAt%20the%20very%20end%2C%20provide%20up%20to%205%20strict%20categorization%20tags.%3C%2FTagging%3E%0A%20%20%20%20%20%20%3CParties%3EUse%20%E7%94%B2%2C%20%E4%B9%99%2C%20%E4%B8%99%20for%20individuals%3B%20A%2C%20B%2C%20C%20for%20entities%3B%20X%2C%20Y%2C%20Z%20for%20objects%2Frights.%3C%2FParties%3E%0A%20%20%20%20%3C%2FFormatting_Rules%3E%0A%20%20%3C%2FContext%3E%0A%0A%20%20%3COperational_Protocol%3E%0A%20%20%20%20%3CStep%20id%3D%221_Extraction%22%3E%0A%20%20%20%20%20%20%3CAction%3ERead%20%7B%ED%8C%90%EB%A1%80%EC%9B%90%EB%AC%B8%7D.%20Extract%20chronological%20facts%2C%20party%20alignments%20(%EC%9B%90%EA%B3%A0%2F%ED%94%BC%EA%B3%A0%20claims)%2C%20explicit%20legal%20issues%2C%20holding%20(Ratio%20Decidendi)%2C%20and%20dicta%20(Obiter%20Dictum).%3C%2FAction%3E%0A%20%20%20%20%3C%2FStep%3E%0A%20%20%20%20%3CStep%20id%3D%222_Transformation%22%3E%0A%20%20%20%20%20%20%3CAction%3ETranslate%20the%20extracted%20text%20into%20the%20dense%20symbolic%20language%20defined%20in%20the%20Symbol_Dictionary.%20Strip%20all%20filler%20words.%20Preserve%20specific%20legal%20terms%20verbatim.%3C%2FAction%3E%0A%20%20%20%20%3C%2FStep%3E%0A%20%20%20%20%3CStep%20id%3D%223_Drafting_Structure%22%3E%0A%20%20%20%20%20%20%3CAction%3EDraft%20the%20output%20precisely%20using%20the%20following%20schema%20sequence%3A%20%5B%EC%82%AC%EA%B1%B4%EA%B0%9C%EC%9A%94%20(Overview)%5D%20-%3E%20%5B%EC%9F%81%EC%A0%90%20(Issues)%5D%20-%3E%20%5B%EB%B2%95%EC%9B%90%ED%8C%90%EB%8B%A8%20(Court%20Judgment)%5D%20-%3E%20%5B%EC%82%AC%EC%95%88%EC%A0%81%EC%9A%A9%2F%EA%B2%B0%EB%A1%A0%20(Application%2FConclusion)%5D.%20Include%20Minor%2FDissenting%20opinions%20if%20present.%3C%2FAction%3E%0A%20%20%20%20%3C%2FStep%3E%0A%20%20%20%20%3CStep%20id%3D%224_Format_Validation%22%3E%0A%20%20%20%20%20%20%3CAction%3EVerify%20that%20no%20standard%20Markdown%20lists%20(*%2C%201.)%20exist.%20Verify%20that%20periods%20are%20minimized.%20Verify%20that%20the%20entire%20output%20is%20wrapped%20in%20%60%60%60text%20...%20%60%60%60.%3C%2FAction%3E%0A%20%20%20%20%3C%2FStep%3E%0A%20%20%3C%2FOperational_Protocol%3E%0A%0A%20%20%3COutput_Spec%3E%0A%20%20%20%20%3CFormat%3EPlain%20text%20enclosed%20in%20a%20single%20markdown%20code%20block.%3C%2FFormat%3E%0A%20%20%20%20%3CTemplate%3E%0A%60%60%60text%0A%E2%98%85%20%5B%EC%82%AC%EA%B1%B4%EB%B2%88%ED%98%B8%5D%20%5B%EC%82%AC%EA%B1%B4%EB%AA%85%5D%0A%0A%E2%96%B6%20%EC%82%AC%EA%B1%B4%EA%B0%9C%EC%9A%94%3A%20%5BParty%20A%5D%20%E2%86%94%20%5BParty%20B%5D.%20%5BFacts%20linked%20by%20%E2%86%92%2C%20%26%2C%20%2B%2C%20%E2%87%92%5D%0A%0A%E2%96%B6%20%EC%9F%81%EC%A0%90%3A%0A%20-%20%E2%91%A0%20%5BIssue%201%5D%20%3F%0A%20-%20%E2%91%A1%20%5BIssue%202%5D%20%3F%0A%0A%E2%96%B6%20%EB%B2%95%EC%9B%90%ED%8C%90%EB%8B%A8%3A%0A%EC%9F%81%EC%A0%90%20%E2%91%A0%3A%20%5BTitle%5D%0A%20-%20%EB%B2%95%EB%A6%AC%3A%0A%20%20-%20%5BRule%201%5D%3A%20%E2%88%B5%20%5BBasis%5D%20%E2%88%B4%20%5BConclusion%5D%0A%20%20-%20%5BRule%202%5D%3A%20%5BCondition%20A%5D%20%26%20%5BCondition%20B%5D%20%E2%87%92%20%5BEffect%5D%20%E2%80%A0%20%EB%8B%A8%2C%20%5BException%5D%0A%20-%20%EC%82%AC%EC%95%88%EC%A0%81%EC%9A%A9%3A%20%E2%87%93%EC%82%AC%EC%95%88%20%E2%86%92%20%5BFact%20application%5D%20%E2%88%B4%20%5BSub-conclusion%5D%0A%0A%5B...Repeat%20for%20all%20issues...%5D%0A%0A%E2%96%B6%20%EA%B2%B0%EB%A1%A0%3A%20%5BFinal%20Order%2FResult%5D%20%E2%88%B5%20%5BCore%20Reason%5D%0A%0A%E2%96%B6%20%EA%B4%80%EB%A0%A8%20%ED%83%9C%EA%B7%B8%3A%20%23%5B%EB%B6%84%EC%95%BC%5D%20%23%5B%EC%84%B8%EB%B6%80%EB%B6%84%EC%95%BC%5D%20%23%5B%ED%95%B5%EC%8B%AC%ED%82%A4%EC%9B%8C%EB%93%9C%5D%20%23%5B%EA%B4%80%EB%A0%A8%EC%A1%B0%EB%AC%B8%5D%0A%60%60%60%60%0A%0A%60%60%60%0A%3C%2FTemplate%3E%0A%60%60%60%0A%0A%3C%2FOutput_Spec%3E%0A%0A%3CEvaluation%3E%0A%3CChecklist%3E%0A%3CCheck%3EIs%20the%20output%20100%25%20contained%20within%20a%20%60%20text%20%20%60%20block%3F%3C%2FCheck%3E%0A%3CCheck%3EAre%20mathematical%2Flogical%20symbols%20used%20rigorously%20according%20to%20the%20Dictionary%3F%3C%2FCheck%3E%0A%3CCheck%3EAre%20there%20any%20fabricated%20facts%20or%20hallucinated%20legal%20principles%3F%20(Must%20be%20strictly%20NO)%3C%2FCheck%3E%0A%3CCheck%3EAre%20standard%20Markdown%20bullets%20completely%20absent%2C%20replaced%20by%20-%2C%20%E2%91%A0%2C%20%E2%91%A1%3F%3C%2FCheck%3E%0A%3C%2FChecklist%3E%0A%3C%2FEvaluation%3E%0A%0A%3CInput%3E%0A%3CRaw_Precedent_Text%3E%0A%7B%7B%ED%8C%90%EB%A1%80%EC%9B%90%EB%AC%B8%7D%7D%0A%3C%2FRaw_Precedent_Text%3E%0A%3C%2FInput%3E%0A%3C%2FSystem_Architecture%3E%0A");
+                const inputs = document.querySelectorAll('.var-input');
+                const output = document.getElementById('output');
+                const copyBtn = document.getElementById('copyBtn');
+
+                function updateOutput() {
+                    let result = rawTemplate;
+                    inputs.forEach(input => {
+                        const varName = input.dataset.var;
+                        let value = '';
+                        
+                        // Handle different input types for string building
+                        if (input.dataset.type === 'checkbox' || input.type === 'checkbox') {
+                            const isKorean = document.documentElement.lang === 'ko';
+                            value = input.checked ? (isKorean ? '예' : 'Yes') : (isKorean ? '아니오' : 'No');
+                        } else {
+                            value = input.value;
+                        }
+
+                        // Fallback to placeholder if empty
+                        if (value === '') value = '{{' + varName + '}}';
+                        
+                        const regex = new RegExp('\\{\\{' + varName + '\\}\\}', 'g');
+                        result = result.replace(regex, value);
+                    });
+                    output.value = result;
+                }
+
+                inputs.forEach(input => input.addEventListener('input', updateOutput));
+                // Add change listener specifically for selects and checkboxes to ensure rapid firing
+                inputs.forEach(input => input.addEventListener('change', updateOutput));
+
+                copyBtn.addEventListener('click', () => {
+                    output.select();
+                    output.setSelectionRange(0, 99999);
+
+                    try {
+                        const successful = document.execCommand('copy');
+                        if(successful) {
+                            const originalHTML = copyBtn.innerHTML;
+                            copyBtn.innerHTML = '<svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Copied!';
+                            copyBtn.classList.replace('bg-blue-600', 'bg-emerald-600');
+                            copyBtn.classList.replace('hover:bg-blue-700', 'hover:bg-emerald-700');
+                            copyBtn.classList.replace('ring-blue-500', 'ring-emerald-500');
+                            
+                            setTimeout(() => {
+                                copyBtn.innerHTML = originalHTML;
+                                copyBtn.classList.replace('bg-emerald-600', 'bg-blue-600');
+                                copyBtn.classList.replace('hover:bg-emerald-700', 'hover:bg-blue-700');
+                                copyBtn.classList.replace('ring-emerald-500', 'ring-blue-500');
+                            }, 2000);
+                        } else {
+                            alert('Failed to copy. Please select and copy manually.');
+                        }
+                    } catch (err) {
+                        alert('Copy function is not supported in this browser.');
+                    }
+                    
+                    window.getSelection().removeAllRanges();
+                    output.blur();
+                });
+
+                updateOutput();
+            
+    </script>
+</body>
+</html>
